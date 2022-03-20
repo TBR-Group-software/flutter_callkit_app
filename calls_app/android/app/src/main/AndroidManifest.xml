@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.in_app_calls_demo">
    <application
-        android:label="in_app_calls_demo"
-        android:name="${applicationName}"
+        android:label="Calls App Demo"
+        android:name=".CallsApplication"
+        android:exported="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
