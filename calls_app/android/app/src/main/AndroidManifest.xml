@@ -27,7 +27,16 @@
         </activity>
 
        <meta-data android:name="com.onesignal.NotificationServiceExtension"
-           android:value="com.example.in_app_calls_demo.NotificationServiceExtension" />
+           android:value="com.example.in_app_calls_demo.notifications.NotificationServiceExtension" />
+
+       <service
+           android:name="com.example.in_app_calls_demo.connection_service.CallConnectionService"
+           android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+           android:exported="true">
+           <intent-filter>
+               <action android:name="android.telecom.ConnectionService"/>
+           </intent-filter>
+       </service>
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
