@@ -17,13 +17,14 @@ class Constants {
 //        const val ACTION_UNMUTE_CALL = "ACTION_UNMUTE_CALL"
 //
 //        const val EXTRA_CALL_NUMBER = "EXTRA_CALL_NUMBER"
-//        const val EXTRA_CALL_UUID = "EXTRA_CALL_UUID"
+        const val EXTRA_CALL_UUID = "EXTRA_CALL_UUID"
 //        const val EXTRA_CALLER_NAME = "EXTRA_CALLER_NAME"
 
 //        const val CALL_FROM_KILLED_MODE = "CALL_FROM_KILLED_MODE"
         const val CALL_INVITATION = "CALL_INVITATION"
 //        const val CALL_CANCELLATION = "CALL_CANCELLATION"
 //
+        const val CALL_DATA = "CALL_DATA"
 //        const val CHANNEL_NAME = "CHANNEL_NAME"
 //        const val CALLER_ID = "CALLER_ID"
 //        const val CALLER_ID_TYPE = "CALLER_ID_TYPE"
