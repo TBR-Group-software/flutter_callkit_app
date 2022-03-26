@@ -2,16 +2,21 @@ package com.example.in_app_calls_demo
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
+import android.os.Build
+import android.telecom.TelecomManager
 import android.util.Log
 import android.view.WindowManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.example.in_app_calls_demo.connection_service.TelecomManagerHelper
 import com.example.in_app_calls_demo.models.CallData
 import com.example.in_app_calls_demo.utils.Constants
 import io.flutter.app.FlutterApplication
+import io.flutter.plugin.common.MethodChannel
 
 @Suppress("unused")
 class CallsApplication : FlutterApplication(), LifecycleObserver {
@@ -80,6 +85,24 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.putExtra(Constants.CALL_DATA, callData)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        applicationContext.startActivity(intent)
+    }
+
+    fun openPhoneAccounts() {
+        if (!TelecomManagerHelper.isConnectionServiceAvailable()) {
+            return
+        }
+        if (Build.MANUFACTURER.equals("Samsung", ignoreCase = true)) {
+            val intent = Intent()
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+            intent.component = ComponentName("com.android.server.telecom",
+                    "com.android.server.telecom.settings.EnableAccountPreferenceActivity")
+            applicationContext.startActivity(intent)
+            return
+        }
+
+        val intent = Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
         applicationContext.startActivity(intent)
     }
 }

@@ -2,6 +2,7 @@ package com.example.in_app_calls_demo.connection_service
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.telecom.TelecomManager
 import androidx.annotation.RequiresApi
 import com.example.in_app_calls_demo.models.CallData
 import com.example.in_app_calls_demo.utils.Constants
+import io.flutter.plugin.common.MethodChannel
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -22,6 +24,12 @@ class TelecomManagerHelper(private val context: Context) {
         val cName = ComponentName(context, CallConnectionService::class.java)
         val appName: String = getApplicationName(context)
         phoneAccountHandle = PhoneAccountHandle(cName, appName)
+    }
+
+    companion object {
+        fun isConnectionServiceAvailable(): Boolean {
+            return Build.VERSION.SDK_INT >= 23
+        }
     }
 
     private fun getApplicationName(context: Context): String {
@@ -49,7 +57,10 @@ class TelecomManagerHelper(private val context: Context) {
     }
 
     fun hasPhoneAccount(): Boolean {
-        val phoneAccount = telecomManager.getPhoneAccount(phoneAccountHandle)
-        return phoneAccount != null && phoneAccount.isEnabled
+        if (isConnectionServiceAvailable()) {
+            val phoneAccount = telecomManager.getPhoneAccount(phoneAccountHandle)
+            return phoneAccount != null && phoneAccount.isEnabled
+        }
+        return false
     }
 }
