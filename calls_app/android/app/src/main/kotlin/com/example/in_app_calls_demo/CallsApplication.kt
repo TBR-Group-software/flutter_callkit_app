@@ -12,11 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.example.in_app_calls_demo.call_kit.FlutterCallKit
 import com.example.in_app_calls_demo.connection_service.TelecomManagerHelper
 import com.example.in_app_calls_demo.models.CallData
 import com.example.in_app_calls_demo.utils.Constants
 import io.flutter.app.FlutterApplication
-import io.flutter.plugin.common.MethodChannel
+import io.flutter.embedding.engine.FlutterEngine
 
 @Suppress("unused")
 class CallsApplication : FlutterApplication(), LifecycleObserver {
@@ -26,6 +27,7 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
 
     private var applicationState: Lifecycle.Event? = null
     private var appActivity: Activity? = null
+    private var flutterCallKit: FlutterCallKit? = null
 
     fun getApplicationState() = applicationState
 
@@ -33,6 +35,10 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
 
     fun setAppActivity(activity: Activity?) {
         appActivity = activity
+    }
+
+    fun configureCallKit(flutterEngine: FlutterEngine) {
+        flutterCallKit = FlutterCallKit(applicationContext, flutterEngine)
     }
 
     override fun onCreate() {
@@ -88,9 +94,9 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
         applicationContext.startActivity(intent)
     }
 
-    fun openPhoneAccounts() {
+    fun openPhoneAccounts(): Boolean {
         if (!TelecomManagerHelper.isConnectionServiceAvailable()) {
-            return
+            return false
         }
         if (Build.MANUFACTURER.equals("Samsung", ignoreCase = true)) {
             val intent = Intent()
@@ -98,11 +104,12 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
             intent.component = ComponentName("com.android.server.telecom",
                     "com.android.server.telecom.settings.EnableAccountPreferenceActivity")
             applicationContext.startActivity(intent)
-            return
+            return true
         }
 
         val intent = Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
         applicationContext.startActivity(intent)
+        return true
     }
 }

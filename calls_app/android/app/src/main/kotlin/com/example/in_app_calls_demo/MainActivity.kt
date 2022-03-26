@@ -17,6 +17,7 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         NotificationServiceExtension.configureNotificationsMethodChannel(flutterEngine)
+        callsApp.configureCallKit(flutterEngine)
     }
 
     override fun onDestroy() {
