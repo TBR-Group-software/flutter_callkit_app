@@ -19,24 +19,26 @@ class FlutterCallKit(private val context: Context, flutterEngine: FlutterEngine)
         private const val tag = "FlutterCallKit"
 
         private const val flutterCallKitMethodsChannel = "in_app_calls_demo/flutter_call_kit/methods"
+        private const val hasPhoneAccountMethod = "hasPhoneAccount"
+        private const val openPhoneAccountsMethod = "openPhoneAccounts"
     }
 
-    private fun handleMethodCall(call: MethodCall, result: MethodChannel.Result): Boolean {
+    private fun handleMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
-            "hasPhoneAccount" -> {
+            hasPhoneAccountMethod -> {
                 hasPhoneAccount(result)
             }
-            "openPhoneAccounts" -> {
+            openPhoneAccountsMethod -> {
                 openPhoneAccounts(result)
             }
-            else -> return false
+            else -> result.notImplemented()
         }
-        return true
     }
 
     private fun hasPhoneAccount(result: MethodChannel.Result) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val telecomManager = TelecomManagerHelper(context)
+            //TODO: request READ_PHONE_STATE permission
             result.success(telecomManager.hasPhoneAccount())
             return
         }

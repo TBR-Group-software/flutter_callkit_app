@@ -15,4 +15,14 @@ class CallData(
         }
         return 0;
     }
+
+    fun toMap(): HashMap<String, Any?> {
+        return hashMapOf(
+                "channelId" to channelId,
+                "callerId" to callerId,
+                "callerPhone" to callerPhone,
+                "callerName" to callerName,
+                "hasVideo" to hasVideo
+        )
+    }
 }

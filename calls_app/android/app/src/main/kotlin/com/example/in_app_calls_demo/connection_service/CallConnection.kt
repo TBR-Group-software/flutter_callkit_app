@@ -42,10 +42,10 @@ class CallConnection(private val context: Context, private val callData: CallDat
         val application = context.applicationContext as CallsApplication
         val applicationState = application.getApplicationState()
         if (applicationState == Lifecycle.Event.ON_START) {
-            //TODO: Send data to flutter side
+            application.sendForegroundAnsweredCallData(callData)
         } else if (applicationState == Lifecycle.Event.ON_STOP) {
             application.backToForeground()
-            //TODO: Send data to flutter side
+            application.sendForegroundAnsweredCallData(callData)
         } else if (applicationState == Lifecycle.Event.ON_DESTROY || applicationState == null) {
             application.startMainActivityWithCallData(callData)
         }
