@@ -1,4 +1,4 @@
-package com.vetsie.vetsie_pet_owner.utils
+package com.example.in_app_calls_demo.utils
 
 import com.onesignal.OSNotification
 import org.json.JSONArray

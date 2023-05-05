@@ -13,13 +13,13 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.example.in_app_calls_demo.call_kit.FlutterCallKit
-import com.example.in_app_calls_demo.connection_service.TelecomManagerHelper
 import com.example.in_app_calls_demo.models.CallData
 import com.example.in_app_calls_demo.utils.Constants
 import io.flutter.app.FlutterApplication
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.util.*
 
 @Suppress("unused")
 class CallsApplication : FlutterApplication(), LifecycleObserver {
@@ -142,9 +142,6 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
     }
 
     fun openPhoneAccounts(): Boolean {
-        if (!TelecomManagerHelper.isConnectionServiceAvailable()) {
-            return false
-        }
         if (Build.MANUFACTURER.equals("Samsung", ignoreCase = true)) {
             val intent = Intent()
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK

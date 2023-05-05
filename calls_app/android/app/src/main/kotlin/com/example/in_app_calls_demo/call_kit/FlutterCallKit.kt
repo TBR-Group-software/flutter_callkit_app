@@ -1,7 +1,7 @@
 package com.example.in_app_calls_demo.call_kit
 
 import android.content.Context
-import android.os.Build
+import android.util.Log
 import com.example.in_app_calls_demo.CallsApplication
 import com.example.in_app_calls_demo.connection_service.TelecomManagerHelper
 import io.flutter.embedding.engine.FlutterEngine
@@ -20,6 +20,7 @@ class FlutterCallKit(private val context: Context, flutterEngine: FlutterEngine)
 
         private const val flutterCallKitMethodsChannel = "in_app_calls_demo/flutter_call_kit/methods"
         private const val hasPhoneAccountMethod = "hasPhoneAccount"
+        private const val createPhoneAccountMethod = "createPhoneAccount"
         private const val openPhoneAccountsMethod = "openPhoneAccounts"
     }
 
@@ -27,6 +28,9 @@ class FlutterCallKit(private val context: Context, flutterEngine: FlutterEngine)
         when (call.method) {
             hasPhoneAccountMethod -> {
                 hasPhoneAccount(result)
+            }
+            createPhoneAccountMethod -> {
+                createPhoneAccount(result)
             }
             openPhoneAccountsMethod -> {
                 openPhoneAccounts(result)
@@ -36,16 +40,25 @@ class FlutterCallKit(private val context: Context, flutterEngine: FlutterEngine)
     }
 
     private fun hasPhoneAccount(result: MethodChannel.Result) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val telecomManager = TelecomManagerHelper(context)
-            //TODO: request READ_PHONE_STATE permission
-            result.success(telecomManager.hasPhoneAccount())
-            return
-        }
-        result.error(tag, "Minimum 23 version of Android is required", null)
+        Log.i(tag, "$hasPhoneAccountMethod is called")
+
+        val telecomManager = TelecomManagerHelper(context)
+        val phoneAccount = telecomManager.getPhoneAccount()
+        val enabled = phoneAccount != null && phoneAccount.isEnabled
+        result.success(enabled)
+    }
+
+    private fun createPhoneAccount(result: MethodChannel.Result) {
+        Log.i(tag, "$createPhoneAccountMethod is called")
+
+        val telecomManager = TelecomManagerHelper(context)
+        val phoneAccount = telecomManager.createPhoneAccount()
+        result.success(phoneAccount.isEnabled)
     }
 
     private fun openPhoneAccounts(result: MethodChannel.Result) {
+        Log.i(tag, "$openPhoneAccountsMethod is called")
+
         val callsApp = context.applicationContext as CallsApplication
         result.success(callsApp.openPhoneAccounts())
     }

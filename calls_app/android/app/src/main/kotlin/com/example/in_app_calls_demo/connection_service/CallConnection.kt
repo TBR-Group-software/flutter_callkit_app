@@ -1,16 +1,13 @@
 package com.example.in_app_calls_demo.connection_service
 
 import android.content.Context
-import android.os.Build
 import android.telecom.Connection
 import android.telecom.DisconnectCause
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import com.example.in_app_calls_demo.CallsApplication
 import com.example.in_app_calls_demo.models.CallData
 
-@RequiresApi(Build.VERSION_CODES.M)
 class CallConnection(private val context: Context, private val callData: CallData) : Connection() {
     companion object {
         private const val tag = "CallConnection"
@@ -40,14 +37,18 @@ class CallConnection(private val context: Context, private val callData: CallDat
         super.onAnswer()
 
         val application = context.applicationContext as CallsApplication
-        val applicationState = application.getApplicationState()
-        if (applicationState == Lifecycle.Event.ON_START) {
-            application.sendForegroundAnsweredCallData(callData)
-        } else if (applicationState == Lifecycle.Event.ON_STOP) {
-            application.backToForeground()
-            application.sendForegroundAnsweredCallData(callData)
-        } else if (applicationState == Lifecycle.Event.ON_DESTROY || applicationState == null) {
-            application.startMainActivityWithCallData(callData)
+        when (application.getApplicationState()) {
+            Lifecycle.Event.ON_START -> {
+                application.sendForegroundAnsweredCallData(callData)
+            }
+            Lifecycle.Event.ON_STOP -> {
+                application.backToForeground()
+                application.sendForegroundAnsweredCallData(callData)
+            }
+            Lifecycle.Event.ON_DESTROY, null -> {
+                application.startMainActivityWithCallData(callData)
+            }
+            else -> {}
         }
 
         onDisconnect()

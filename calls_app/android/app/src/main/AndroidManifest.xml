@@ -4,6 +4,11 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:label="Calls App Demo"
@@ -38,7 +43,7 @@
        <service
            android:name="com.example.in_app_calls_demo.connection_service.CallConnectionService"
            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
-           android:exported="true">
+           android:exported="false">
            <intent-filter>
                <action android:name="android.telecom.ConnectionService"/>
            </intent-filter>

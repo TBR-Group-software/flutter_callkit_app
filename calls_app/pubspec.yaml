@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   onesignal_flutter: ^3.2.8
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,16 +1,11 @@
 package com.example.in_app_calls_demo.connection_service
 
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.telecom.*
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.example.in_app_calls_demo.models.CallData
-import com.example.in_app_calls_demo.utils.Constants
-import java.lang.Exception
 
-@RequiresApi(Build.VERSION_CODES.M)
 class CallConnectionService : ConnectionService() {
     companion object {
         private const val tag = "CallConnectionService"
@@ -28,20 +23,19 @@ class CallConnectionService : ConnectionService() {
         Log.i(tag, "onCreateIncomingConnection called. " + phoneAccount.toString() + " " + request)
 
         val extras: Bundle = request!!.extras
-        val callData: CallData? = extras.getSerializable(Constants.CALL_DATA) as CallData?
+        //TODO: take real data from Bundle
+        val callData = CallData(callerId = "12345", channelId = "1", callerPhone = "+1 123 1234 12345", callerName = "Name Name", hasVideo = true)
+        //val callData: CallData? = extras.getSerializable(Constants.CALL_DATA) as CallData?
         val phoneUri: Uri? = extras.getParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS)
         val videoState: Int = extras.getInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, 0)
 
-        if (callData != null) {
-            val connection = CallConnection(applicationContext, callData)
-            connection.videoState = videoState
-            connection.setAddress(phoneUri, TelecomManager.PRESENTATION_ALLOWED)
-            connection.setCallerDisplayName(callData.callerName, TelecomManager.PRESENTATION_ALLOWED)
-            connection.setRinging()
-            return connection
-        } else {
-            throw Exception("$tag: CallData must be provided.")
-        }
+        val connection = CallConnection(applicationContext, callData)
+        connection.videoState = videoState
+        connection.setAddress(phoneUri, TelecomManager.PRESENTATION_ALLOWED)
+        connection.setCallerDisplayName(callData.callerName, TelecomManager.PRESENTATION_ALLOWED)
+        connection.setRinging()
+        return connection
+
     }
 
     override fun onCreateIncomingConnectionFailed(connectionManagerPhoneAccount: PhoneAccountHandle?, request: ConnectionRequest?) {
