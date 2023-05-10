@@ -12,11 +12,13 @@ dependencies:
   flutter:
     sdk: flutter
   onesignal_flutter: ^3.2.8
+  permission_handler: ^10.2.0
 
 dev_dependencies:
+  dart_code_metrics: ^5.7.3
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  very_good_analysis: ^4.0.0
 
 flutter:
   uses-material-design: true
