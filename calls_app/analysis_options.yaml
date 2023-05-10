@@ -1,23 +1,87 @@
-include: package:flutter_lints/flutter.yaml
-
+include: package:very_good_analysis/analysis_options.4.0.0.yaml
 analyzer:
   exclude:
-    - "bin/cache/**"
-    - "lib/i18n/messages_*.dart"
-    - "lib/src/http/**"
-    - "**/*.g.dart"
-    - "**/*.freezed.dart"
+    # General generated files
+    - '**/*.g.dart'
+    - '**/*.gr.dart'
+    - '**/*.gen.dart'
+
+    # Flutter
+    - 'lib/generated_plugin_registrant.dart'
+
+    # mockito
+    - '*.mocks.dart'
+    - '**/*.mocks.dart'
+
+    # freezed
+    - '**/*.freezed.dart'
+
+    # protobuf
+    - '**/*.pb.dart'
+
+    # test_coverage
+    - test/.test_coverage.dart
+
+  # Dart Code Metrics plugin (https://dartcodemetrics.dev/) provides many additional rules
+  # that helped to automate some pieces of our internal team code style based on the best
+  # industry practices.
+  plugins:
+    - dart_code_metrics
+  strong-mode:
+    # We've seen errors tied to use of implicit operations similar to the ones described in
+    # https://dart.dev/guides/language/analysis-options#enabling-additional-type-checks.
+    # When we do things explicitly there is less room for errors.
+    implicit-casts: false
+    implicit-dynamic: false
+
+  errors:
+    missing_required_param: error
+    missing_return: error
+    parameter_assignments: error
+
+dart_code_metrics:
+  metrics:
+    # NIST 500-235 item 2.5
+    cyclomatic-complexity: 10
+
+    # McConnell, S. (2004), Chapter 7.5: High-Quality Routines: How To Use Routine Parameters. Code Complete, Second Edition, Redmond, WA, USA: Microsoft Press. 174-180
+    number-of-parameters: 7
+
+    # McConnell, S. (2004), Chapter 7.4: High-Quality Routines: How Long Can a Routine Be?. Code Complete, Second Edition, Redmond, WA, USA: Microsoft Press. 173-174
+    source-lines-of-code: 200
+
+    # We use source-lines-of-code instead of this as we don't want to count comment or blank lines.
+    # lines-of-code: 50
+  rules:
+    - avoid-global-state
+    - avoid-non-null-assertion
+    - avoid-returning-widgets
+    - avoid-unnecessary-setstate
+    - avoid-unnecessary-type-assertions
+    - avoid-unnecessary-type-casts
+    - avoid-unrelated-type-assertions
+    - avoid-unused-parameters
+    - double-literal-format
+    - member-ordering-extended:
+        order:
+          - constructors
+          - fields
+          - getters-setters
+          - methods
+    - no-empty-block
+    - no-equal-then-else
+    - prefer-conditional-expressions
+    - prefer-first
+    - prefer-last
+    # This improves navigation by matching file content and file name.
+    - prefer-match-file-name
+  anti-patterns:
+    - long-method
+    - long-parameter-list
 
 linter:
   rules:
-    - always_declare_return_types
-    - always_put_control_body_on_new_line
-    - always_put_required_named_parameters_first
-    - avoid_relative_lib_imports
-    - avoid_renaming_method_parameters
-    - avoid_return_types_on_setters
-    - cancel_subscriptions
-    - close_sinks # not reliable enough
-    - prefer_is_empty
-    - prefer_is_not_empty
-    - prefer_single_quotes
+    public_member_api_docs: false
+    avoid_relative_lib_imports: false
+    always_use_package_imports: false
+    prefer_relative_imports: true
