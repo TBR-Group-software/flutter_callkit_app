@@ -33,17 +33,20 @@ class TelecomManagerHelper(private val context: Context) {
             phoneAccount = createPhoneAccount()
         }
 
-        val extras = Bundle()
         val uuid = UUID.randomUUID()
-        extras.putString(Constants.EXTRA_CALL_UUID, uuid.toString())
+        val incomingExtras = Bundle().apply {
+            putString(Constants.EXTRA_CALL_UUID, uuid.toString())
+            putParcelable(Constants.CALL_DATA, callData)
+        }
 
         val phoneUri = Uri.fromParts(PhoneAccount.SCHEME_TEL, callData.callerName, null)
-        extras.putParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, phoneUri)
+        val extras = Bundle().apply {
+            putBundle(TelecomManager.EXTRA_INCOMING_CALL_EXTRAS, incomingExtras)
+            putParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, phoneUri)
+            putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccount)
+            putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, callData.hasVideoToInt())
+        }
 
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccount)
-        extras.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, callData.hasVideoToInt())
-        //TODO: pass call data
-        //extras.putSerializable(Constants.CALL_DATA, callData)
 
         telecomManager.addNewIncomingCall(phoneAccountHandle, extras)
     }
