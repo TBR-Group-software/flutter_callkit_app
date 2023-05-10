@@ -17,28 +17,18 @@ import com.example.in_app_calls_demo.models.CallData
 import com.example.in_app_calls_demo.utils.Constants
 import io.flutter.app.FlutterApplication
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import java.util.*
 
 @Suppress("unused")
 class CallsApplication : FlutterApplication(), LifecycleObserver {
     companion object {
         private const val tag = "CallsApplication"
-
-        private const val callForegroundChannel = "in_app_calls_demo/call/foreground"
-        private const val callAnsweredMethod = "callAnswered"
-
-        private const val callBackgroundChannel = "in_app_calls_demo/call/background"
-        private const val isAppLaunchedWithCallDataMethod = "isAppLaunchedWithCallData"
     }
 
     private var applicationState: Lifecycle.Event? = null
     private var appActivity: Activity? = null
-    private var flutterCallKit: FlutterCallKit? = null
-    private var callForegroundMethodChannel: MethodChannel? = null
-    private var callBackgroundMethodChannel: MethodChannel? = null
 
+    private var flutterCallKit: FlutterCallKit? = null
     private var backgroundCallData: CallData? = null
 
     fun getApplicationState() = applicationState
@@ -54,33 +44,7 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
     }
 
     fun configureWithFlutterEngine(flutterEngine: FlutterEngine) {
-        configureCallKit(flutterEngine)
-        configureCallForegroundChannel(flutterEngine)
-        configureCallBackgroundChannel(flutterEngine)
-    }
-
-    private fun configureCallKit(flutterEngine: FlutterEngine) {
-        flutterCallKit = FlutterCallKit(applicationContext, flutterEngine)
-    }
-
-    private fun configureCallForegroundChannel(flutterEngine: FlutterEngine) {
-        callForegroundMethodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, callForegroundChannel)
-    }
-
-    private fun configureCallBackgroundChannel(flutterEngine: FlutterEngine) {
-        callBackgroundMethodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, callBackgroundChannel)
-        callBackgroundMethodChannel?.setMethodCallHandler { call, result ->
-            handleCallBackgroundMethodCall(call, result)
-        }
-    }
-
-    private fun handleCallBackgroundMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
-            isAppLaunchedWithCallDataMethod -> {
-                result.success(backgroundCallData?.toMap())
-            }
-            else -> result.notImplemented()
-        }
+        flutterCallKit = FlutterCallKit(applicationContext, backgroundCallData, flutterEngine)
     }
 
     override fun onCreate() {
@@ -121,11 +85,7 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED +
                     WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD +
                     WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-            if (activity != null) {
-                activity.startActivity(focusIntent)
-            } else {
-                applicationContext.startActivity(focusIntent)
-            }
+            applicationContext.startActivity(focusIntent)
         }
     }
 
@@ -138,7 +98,7 @@ class CallsApplication : FlutterApplication(), LifecycleObserver {
     }
 
     fun sendForegroundAnsweredCallData(callData: CallData) {
-        callForegroundMethodChannel?.invokeMethod(callAnsweredMethod, callData.toMap())
+        flutterCallKit?.sendForegroundAnsweredCallData(callData)
     }
 
     fun openPhoneAccounts(): Boolean {
