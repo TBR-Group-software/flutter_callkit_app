@@ -1,6 +1,5 @@
 package com.example.in_app_calls_demo
 
-import com.example.in_app_calls_demo.notifications.NotificationServiceExtension
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 
@@ -11,7 +10,6 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         callsApp = applicationContext as CallsApplication
         callsApp.setAppActivity(this)
-        NotificationServiceExtension.configureNotificationsMethodChannel(flutterEngine)
         callsApp.configureWithFlutterEngine(flutterEngine)
     }
 
