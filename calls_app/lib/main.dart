@@ -91,6 +91,25 @@ class _MyAppState extends State<MyApp> {
       _initCompleter.completeError(e, s);
       return;
     }
+
+    callKit.listenAcceptedCalls(
+      (callData) {
+        if (!mounted) {
+          _callData = callData;
+          return;
+        }
+
+        setState(() => _callData = callData);
+      },
+      onError: (Object e, _) {
+        if (!mounted) {
+          _callDataError = e;
+          return;
+        }
+
+        setState(() => _callDataError = e);
+      },
+    );
   }
 
   @override
