@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
-import 'models/call_data.dart';
+import '../../models/call_data.dart';
 
 class AndroidCallKitGateWay {
   AndroidCallKitGateWay() {

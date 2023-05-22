@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:permission_handler/permission_handler.dart';
 
-import '../data/android_call_kit_gate_way.dart';
+import '../data/gate_ways/call_kit/android_call_kit_gate_way.dart';
 import '../data/models/call_data.dart';
 
 class AndroidCallKitService {

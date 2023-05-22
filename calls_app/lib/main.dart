@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import 'data/models/call_data.dart';
 import 'domain/android_call_kit_service.dart';
+import 'domain/ios_call_kit_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,10 +33,14 @@ class _MyAppState extends State<MyApp> {
         (OSNotificationReceivedEvent event) {
       print(event.jsonRepresentation());
     });
-    _initPhoneCalls();
+    if (Platform.isAndroid) {
+      _initAndroidPhoneCalls();
+    } else if (Platform.isIOS) {
+      _initIOSPhoneCalls();
+    }
   }
 
-  Future<void> _initPhoneCalls() async {
+  Future<void> _initAndroidPhoneCalls() async {
     final callKit = AndroidCallKitService();
 
     try {
@@ -53,6 +59,37 @@ class _MyAppState extends State<MyApp> {
       _launchCallDataCompleter.complete(launchCallData);
     } catch (e, s) {
       _launchCallDataCompleter.completeError(e, s);
+    }
+
+    callKit.listenAcceptedCalls(
+      (callData) {
+        if (!mounted) {
+          _callData = callData;
+          return;
+        }
+
+        setState(() => _callData = callData);
+      },
+      onError: (Object e, _) {
+        if (!mounted) {
+          _callDataError = e;
+          return;
+        }
+
+        setState(() => _callDataError = e);
+      },
+    );
+  }
+
+  Future<void> _initIOSPhoneCalls() async {
+    final callKit = IosCallKitService();
+
+    try {
+      final callsSetup = await callKit.initTelecomServices();
+      _initCompleter.complete(callsSetup);
+    } catch (e, s) {
+      _initCompleter.completeError(e, s);
+      return;
     }
 
     callKit.listenAcceptedCalls(
@@ -114,7 +151,11 @@ class _MyAppState extends State<MyApp> {
                 future: _initCompleter.future,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return const Text('Calls setup complete');
+                    return Text(
+                      snapshot.data!
+                          ? 'Calls setup complete'
+                          : 'Calls setup failed',
+                    );
                   }
                   if (snapshot.error != null) {
                     return Text('Calls setup error - ${snapshot.error}');
