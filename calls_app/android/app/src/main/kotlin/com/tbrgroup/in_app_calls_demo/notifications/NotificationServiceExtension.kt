@@ -1,10 +1,10 @@
-package com.example.in_app_calls_demo.notifications
+package com.tbrgroup.in_app_calls_demo.notifications
 
 import android.content.Context
 import android.util.Log
-import com.example.in_app_calls_demo.connection_service.TelecomManagerHelper
-import com.example.in_app_calls_demo.models.CallData
-import com.example.in_app_calls_demo.utils.Constants
+import com.tbrgroup.in_app_calls_demo.connection_service.TelecomManagerHelper
+import com.tbrgroup.in_app_calls_demo.models.CallData
+import com.tbrgroup.in_app_calls_demo.utils.Constants
 import com.onesignal.OSNotificationReceivedEvent
 import com.onesignal.OneSignal.OSRemoteNotificationReceivedHandler
 

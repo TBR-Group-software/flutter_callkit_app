@@ -1,10 +1,10 @@
-package com.example.in_app_calls_demo.call_kit
+package com.tbrgroup.in_app_calls_demo.call_kit
 
 import android.content.Context
 import android.util.Log
-import com.example.in_app_calls_demo.CallsApplication
-import com.example.in_app_calls_demo.connection_service.TelecomManagerHelper
-import com.example.in_app_calls_demo.models.CallData
+import com.tbrgroup.in_app_calls_demo.CallsApplication
+import com.tbrgroup.in_app_calls_demo.connection_service.TelecomManagerHelper
+import com.tbrgroup.in_app_calls_demo.models.CallData
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
