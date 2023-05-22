@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import 'data/models/call_data.dart';
-import 'domain/android_call_kit_service.dart';
-import 'domain/ios_call_kit_service.dart';
+import 'domain/call_kit_service/android_call_kit_service.dart';
+import 'domain/call_kit_service/ios_call_kit_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -90,6 +90,13 @@ class _MyAppState extends State<MyApp> {
     } catch (e, s) {
       _initCompleter.completeError(e, s);
       return;
+    }
+
+    try {
+      final launchCallData = await callKit.launchCallData();
+      _launchCallDataCompleter.complete(launchCallData);
+    } catch (e, s) {
+      _launchCallDataCompleter.completeError(e, s);
     }
 
     callKit.listenAcceptedCalls(
