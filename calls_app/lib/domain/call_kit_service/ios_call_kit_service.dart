@@ -2,27 +2,33 @@ import 'dart:async';
 
 import '../../data/gate_ways/call_kit/ios_call_kit_gate_way.dart';
 import '../../data/gate_ways/notifications/one_signal_voip_notifications_gate_way.dart';
+import '../../data/gate_ways/user/firebase_user_gate_way.dart';
 import '../../data/gate_ways/voip_token_gate_way.dart';
 import '../../data/models/call_data.dart';
 import 'call_kit_service.dart';
 
 class IosCallKitService implements CallKitService {
+  final _userGateWay = FirebaseUserGateWay();
   final _voipTokenGateWay = VoipTokenGateWay();
   final _oneSignalVoipNotificationsGateWay =
       OneSignalVoipNotificationsGateWay();
   final _iosCallKitGateWay = IosCallKitGateWay();
 
-  /// Return [bool] value. True means that all required steps to configure
-  /// VoIP services were done. False means something went wrong while getting
-  /// the VoIP token.
+  /// Return [bool] value. True means that all required steps to configure VoIP
+  /// services were done. False that one of the following issues has appeared:
+  /// - there is no singed in user
+  /// - something went wrong while getting the VoIP token.
   @override
   Future<bool> initTelecomServices() async {
+    final user = await _userGateWay.getCurrentUser();
+    if (user == null) return false;
+
     final voipToken = await _voipTokenGateWay.getVoipToken();
     if (voipToken == null || voipToken.isEmpty) return false;
 
     await _oneSignalVoipNotificationsGateWay.registerVoipToken(
       voipToken,
-      '07acf653-5357-4ae1-997c-60c0f9a76dc7',
+      user.id,
     );
 
     return true;

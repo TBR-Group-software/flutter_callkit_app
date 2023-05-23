@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../data/models/call_data.dart';
 import '../../domain/call_kit_service/android_call_kit_service.dart';
@@ -36,9 +35,6 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
     final callKit = AndroidCallKitService();
 
     try {
-      await OneSignal.shared.setAppId('');
-      await OneSignal.shared.promptUserForPushNotificationPermission();
-
       final callsSetup = await callKit.initTelecomServices();
       _initCompleter.complete(callsSetup);
     } catch (e, s) {
