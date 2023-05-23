@@ -1,10 +1,10 @@
-package com.example.in_app_calls_demo.connection_service
+package com.tbrgroup.in_app_calls_demo.connection_service
 
 import android.net.Uri
 import android.telecom.*
 import android.util.Log
-import com.example.in_app_calls_demo.models.CallData
-import com.example.in_app_calls_demo.utils.Constants
+import com.tbrgroup.in_app_calls_demo.models.CallData
+import com.tbrgroup.in_app_calls_demo.utils.Constants
 
 class CallConnectionService : ConnectionService() {
     companion object {

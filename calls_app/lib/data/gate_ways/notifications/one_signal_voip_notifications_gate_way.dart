@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../environment_config.dart';
+
 class OneSignalVoipNotificationsGateWay {
   final _dio = Dio(BaseOptions(baseUrl: 'https://onesignal.com/'));
 
@@ -11,7 +13,7 @@ class OneSignalVoipNotificationsGateWay {
       _dio.post<dynamic>(
         'api/v1/players',
         data: <String, dynamic>{
-          'app_id': '',
+          'app_id': EnvironmentConfig.oneSignalVoipKey,
           'identifier': voipToken,
           'external_user_id': userId,
           'device_type': 0,

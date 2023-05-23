@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.in_app_calls_demo">
+    package="com.tbrgroup.in_app_calls_demo">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS"/>
@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
-        android:label="Calls App Demo"
+        android:label="TBR In App Calls Demo"
         android:name=".CallsApplication"
         android:exported="true"
         android:icon="@mipmap/ic_launcher">
@@ -38,10 +38,10 @@
         </activity>
 
        <meta-data android:name="com.onesignal.NotificationServiceExtension"
-           android:value="com.example.in_app_calls_demo.notifications.NotificationServiceExtension" />
+           android:value="com.tbrgroup.in_app_calls_demo.notifications.NotificationServiceExtension" />
 
        <service
-           android:name="com.example.in_app_calls_demo.connection_service.CallConnectionService"
+           android:name=".connection_service.CallConnectionService"
            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
            android:exported="false">
            <intent-filter>

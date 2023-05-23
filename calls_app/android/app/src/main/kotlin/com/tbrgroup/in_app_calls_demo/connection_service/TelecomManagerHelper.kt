@@ -1,4 +1,4 @@
-package com.example.in_app_calls_demo.connection_service
+package com.tbrgroup.in_app_calls_demo.connection_service
 
 import android.content.ComponentName
 import android.content.Context
@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.telecom.PhoneAccount
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
-import com.example.in_app_calls_demo.models.CallData
-import com.example.in_app_calls_demo.utils.Constants
+import com.tbrgroup.in_app_calls_demo.models.CallData
+import com.tbrgroup.in_app_calls_demo.utils.Constants
 import java.util.*
 
 class TelecomManagerHelper(private val context: Context) {

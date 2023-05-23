@@ -1,4 +1,4 @@
-package com.example.in_app_calls_demo.utils
+package com.tbrgroup.in_app_calls_demo.utils
 
 class Constants {
     companion object {

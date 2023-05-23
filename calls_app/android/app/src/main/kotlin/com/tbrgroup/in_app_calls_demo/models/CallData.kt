@@ -1,4 +1,4 @@
-package com.example.in_app_calls_demo.models
+package com.tbrgroup.in_app_calls_demo.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

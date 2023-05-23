@@ -1,4 +1,4 @@
-package com.example.in_app_calls_demo
+package com.tbrgroup.in_app_calls_demo
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,9 +12,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.example.in_app_calls_demo.call_kit.FlutterCallKit
-import com.example.in_app_calls_demo.models.CallData
-import com.example.in_app_calls_demo.utils.Constants
+import com.tbrgroup.in_app_calls_demo.call_kit.FlutterCallKit
+import com.tbrgroup.in_app_calls_demo.models.CallData
+import com.tbrgroup.in_app_calls_demo.utils.Constants
 import io.flutter.app.FlutterApplication
 import io.flutter.embedding.engine.FlutterEngine
 import java.util.*
