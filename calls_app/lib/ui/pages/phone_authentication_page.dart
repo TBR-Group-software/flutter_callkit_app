@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../data/gate_ways/phone_auth/firebase_phone_auth_gate_way.dart';
+import '../../domain/phone_auth/user_phone_auth_service.dart';
 import 'calls_setup_page.dart';
 
 class PhoneAuthenticationPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class PhoneAuthenticationPage extends StatefulWidget {
 }
 
 class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
-  final _phoneAuthGateWay = FirebasePhoneAuthGateWay();
+  final _phoneAuthService = UserPhoneAuthService();
 
   final _phoneController = TextEditingController();
   final _smsController = TextEditingController();
@@ -27,7 +27,7 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
   Future<void> _verifyPhone() async {
     try {
       final codeSentData =
-          await _phoneAuthGateWay.verifyPhoneNumber(_phoneController.text);
+          await _phoneAuthService.verifyPhoneNumber(_phoneController.text);
       setState(() {
         _verificationId = codeSentData.verificationId;
         _sendCodeState = 'Code sent, verificationId - $_verificationId';
@@ -39,7 +39,7 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
 
   Future<void> _sendCode() async {
     try {
-      await _phoneAuthGateWay.signInWithCredentials(
+      await _phoneAuthService.signInWithSmsCode(
         _verificationId!,
         _smsController.text,
       );

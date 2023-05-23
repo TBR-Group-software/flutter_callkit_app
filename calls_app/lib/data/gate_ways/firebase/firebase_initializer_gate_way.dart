@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -24,5 +25,10 @@ class FirebaseInitializerGateWay {
   Future<FirebaseAuth> get firebaseAuth async {
     await _firebaseCompleter.future;
     return FirebaseAuth.instance;
+  }
+
+  Future<FirebaseFirestore> get firestore async {
+    await _firebaseCompleter.future;
+    return FirebaseFirestore.instance;
   }
 }

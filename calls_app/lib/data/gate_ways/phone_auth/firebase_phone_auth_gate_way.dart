@@ -43,7 +43,7 @@ class FirebasePhoneAuthGateWay implements PhoneAuthGateWay {
   }
 
   @override
-  Future<void> signInWithCredentials(
+  Future<void> signInWithSmsCode(
     String verificationId,
     String smsCode,
   ) async {
