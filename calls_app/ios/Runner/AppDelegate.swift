@@ -6,12 +6,24 @@ import Flutter
 import flutter_voip_push_notification
 import flutter_callkit_voximplant
 
+enum ParsingError: Error {
+    case runtimeError(String)
+}
+
 struct CallData {
     var channelId: String?
     var callerId: String?
     var callerPhone: String?
     var callerName: String?
     var hasVideo: Bool?
+    
+    init(with dictionary: [AnyHashable: Any]) throws {
+        channelId = dictionary["channel_id"] as? String
+        callerId = dictionary["caller_id"] as? String
+        callerPhone = dictionary["caller_phone"] as? String
+        callerName = dictionary["caller_name"] as? String
+        hasVideo = dictionary["has_video"] as? Bool
+    }
     
     var dictionary: [String: Any?] {
         return ["channelId": channelId,
@@ -123,17 +135,16 @@ struct CallData {
     }
     
     private func processVoipPush(
-        with payload: Dictionary<AnyHashable, Any>,
+        with payload: [AnyHashable: Any],
         and completion: (() -> Void)?
     ) {
-        //TODO: add real call data
-        let callData = CallData(
-            channelId: "12345",
-            callerId: "1",
-            callerPhone: "+1 123 1234 12345",
-            callerName: "Name Name",
-            hasVideo: true
-        )
+        os_log("processVoipPush received push payload %@", log: osLog, type: .debug, payload.description)
+
+        guard let callData = try? parseCallDataFromVoipNotification(with: payload) else {
+            os_log("processVoipPush parsing call data error", log: osLog, type: .debug)
+            completion?()
+            return
+        }
         
         let uuid = UUID.init()
         callsDict[uuid.uuidString] = callData
@@ -163,5 +174,19 @@ struct CallData {
             providerConfiguration: configuration,
             pushProcessingCompletion: completion
         )
+    }
+    
+    private func parseCallDataFromVoipNotification(
+        with payload: [AnyHashable: Any]
+    ) throws -> CallData {
+        guard let customData = payload["custom"] as? [AnyHashable: Any] else {
+            os_log("parseCallDataFromVoipNotification custom data parsing error", log: osLog, type: .debug)
+            throw ParsingError.runtimeError("Custom data parsing error")
+        }
+        guard let additionalData = customData["a"] as? [AnyHashable: Any] else {
+            os_log("parseCallDataFromVoipNotification additional data parsing error", log: osLog, type: .debug)
+            throw ParsingError.runtimeError("Additional data parsing error")
+        }
+        return try CallData.init(with: additionalData)
     }
 }
