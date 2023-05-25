@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../data/gate_ways/firebase/firebase_initializer_gate_way.dart';
+import '../../data/gate_ways/user/firebase_user_gate_way.dart';
 import '../../data/models/call_data.dart';
 import '../../domain/call_kit_service/android_call_kit_service.dart';
 import '../../domain/call_kit_service/ios_call_kit_service.dart';
@@ -107,6 +110,24 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
     );
   }
 
+  Future<void> _call() async {
+    final functions = await FirebaseInitializerGateWay.instance.functions;
+
+    final userGateWay = FirebaseUserGateWay();
+    final user = await userGateWay.getCurrentUser();
+    if (user == null) return;
+
+    try {
+      await functions.httpsCallable('sendCallNotification').call<void>(
+        <String, dynamic>{
+          'calleeId': user.id,
+        },
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,6 +179,10 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
                   ],
                 );
               },
+            ),
+            TextButton(
+              onPressed: _call,
+              child: const Text('Call'),
             ),
           ],
         ),

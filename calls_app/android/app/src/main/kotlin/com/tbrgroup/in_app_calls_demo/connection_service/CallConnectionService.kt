@@ -34,7 +34,8 @@ class CallConnectionService : ConnectionService() {
         val connection = CallConnection(applicationContext, callData!!)
         connection.videoState = videoState
         connection.setAddress(phoneUri, TelecomManager.PRESENTATION_ALLOWED)
-        connection.setCallerDisplayName(callData.callerName, TelecomManager.PRESENTATION_ALLOWED)
+        connection.setCallerDisplayName(callData.callerName
+                ?: "Unknown", TelecomManager.PRESENTATION_ALLOWED)
         connection.setRinging()
         return connection
     }
