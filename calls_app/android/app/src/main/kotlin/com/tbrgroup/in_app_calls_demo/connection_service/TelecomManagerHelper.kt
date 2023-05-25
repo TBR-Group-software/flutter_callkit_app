@@ -39,7 +39,8 @@ class TelecomManagerHelper(private val context: Context) {
             putParcelable(Constants.CALL_DATA, callData)
         }
 
-        val phoneUri = Uri.fromParts(PhoneAccount.SCHEME_TEL, callData.callerName, null)
+        val phoneUri = Uri.fromParts(PhoneAccount.SCHEME_TEL, callData.callerName
+                ?: "Unknown", null)
         val extras = Bundle().apply {
             putBundle(TelecomManager.EXTRA_INCOMING_CALL_EXTRAS, incomingExtras)
             putParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, phoneUri)

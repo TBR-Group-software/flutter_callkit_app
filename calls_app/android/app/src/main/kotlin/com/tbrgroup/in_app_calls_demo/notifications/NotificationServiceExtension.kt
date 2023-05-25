@@ -19,16 +19,14 @@ class NotificationServiceExtension : OSRemoteNotificationReceivedHandler {
 
         val data = notification.additionalData
         Log.i(tag, "Received Notification Data: $data")
-
-        val notificationType = data["notificationType"]
+        val notificationType = data.optString("notification_type")
 
         if (notificationType == Constants.CALL_INVITATION) {
             val telecomManager = TelecomManagerHelper(context)
-            //TODO: add real call data
-            val callData = CallData(callerId = "12345", channelId = "1", callerPhone = "+1 123 1234 12345", callerName = "Name Name", hasVideo = true)
+            val callData = CallData(data)
             telecomManager.makeCall(callData)
 
-            // Doesn't show the notification if it was CALL_INVITATION
+            // Prevents the notification from being shown if it was a CALL_INVITATION
             notificationReceivedEvent.complete(null)
             return
         }
