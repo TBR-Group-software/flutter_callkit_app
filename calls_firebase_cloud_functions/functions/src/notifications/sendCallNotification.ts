@@ -3,6 +3,8 @@ import * as admin from "firebase-admin";
 import axios, { AxiosError } from "axios";
 import { handleAxiosError } from "../utils/handleAxiosError";
 import { CallData } from "./callData";
+import { buildRtcToken } from "../calls/build_rtc_token";
+import { v4 as uuid } from "uuid";
 
 const oneSignalNotificationUrl = "https://onesignal.com/";
 
@@ -40,10 +42,13 @@ export const sendCallNotificationHandler = async (
     );
   }
 
+  const channelId = uuid();
+  const callToken = buildRtcToken(callerDoc.id, channelId);
+
   const callData = new CallData(
     callerId,
     calleeId,
-    "1",
+    channelId,
     callerData.phoneNumber,
     callerData.name,
     data.hasVideo
@@ -51,9 +56,9 @@ export const sendCallNotificationHandler = async (
 
   const userPlatform = calleeData.platform;
 
-  if (userPlatform === "IOS") {
+  if (userPlatform === "ios") {
     await sendIosCallVoipNotification(callData);
-  } else if (userPlatform === "Android") {
+  } else if (userPlatform === "android") {
     await sendAndroidCallNotification(callData);
   } else {
     throw new functions.https.HttpsError(
@@ -61,6 +66,11 @@ export const sendCallNotificationHandler = async (
       `Send call notification is not supported for ${userPlatform}.`
     );
   }
+
+  return {
+    channelId: channelId,
+    token: callToken,
+  };
 };
 
 const sendIosCallVoipNotification = async (
