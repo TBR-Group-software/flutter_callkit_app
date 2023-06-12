@@ -1,10 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
-import 'data/gate_ways/firebase/firebase_initializer_gate_way.dart';
+import 'injection/injection.dart';
 import 'ui/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FirebaseInitializerGateWay.instance.init();
+
+  if (Platform.isAndroid) {
+    configureDependencies(CallEnvironment.android);
+  } else if (Platform.isIOS) {
+    configureDependencies(CallEnvironment.ios);
+  }
+
   runApp(const App());
 }

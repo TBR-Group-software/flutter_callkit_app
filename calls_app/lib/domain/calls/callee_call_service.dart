@@ -1,19 +1,23 @@
+import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../data/gate_ways/calls/firebase_call_gate_way.dart';
-import '../../data/gate_ways/user/firebase_user_gate_way.dart';
+import '../../data/gate_ways/calls/call_gate_way.dart';
+import '../../data/gate_ways/user/user_gate_way.dart';
 import '../../data/gate_ways/video_call/video_call_gate_way.dart';
 import '../../data/models/call_engine.dart';
 import 'call_service.dart';
 
+@injectable
 class CalleeCallService extends CallService {
-  CalleeCallService(super.videoCallGateWay)
-      : _videoCallGateWay = videoCallGateWay;
+  CalleeCallService(
+    super.videoCallGateWay,
+    this._userGateWay,
+    this._callGateWay,
+  ) : _videoCallGateWay = videoCallGateWay;
 
   final VideoCallGateWay _videoCallGateWay;
-
-  final _userGateWay = FirebaseUserGateWay();
-  final _callGateWay = FirebaseCallGateWay();
+  final UserGateWay _userGateWay;
+  final CallGateWay _callGateWay;
 
   /// Joins the call initiated by another user. Returns [CallEngine] if
   /// permissions were granted. Returns null if one of the following issues has

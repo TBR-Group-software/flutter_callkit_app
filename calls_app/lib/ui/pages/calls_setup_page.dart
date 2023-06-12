@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../data/gate_ways/video_call/agora_video_call_gate_way.dart';
 import '../../data/models/call_data.dart';
-import '../../domain/call_kit_service/android_call_kit_service.dart';
-import '../../domain/call_kit_service/ios_call_kit_service.dart';
+import '../../domain/call_kit_service/call_kit_service.dart';
 import '../../domain/calls/callee_call_service.dart';
 import '../../domain/calls/caller_call_service.dart';
+import '../../injection/injection.dart';
 import 'video_call_page.dart';
 
 class CallsSetupPage extends StatefulWidget {
@@ -31,53 +29,11 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid) {
-      _initAndroidPhoneCalls();
-    } else if (Platform.isIOS) {
-      _initIOSPhoneCalls();
-    }
+    _initPhoneCalls();
   }
 
-  Future<void> _initAndroidPhoneCalls() async {
-    final callKit = AndroidCallKitService();
-
-    try {
-      final callsSetup = await callKit.initTelecomServices();
-      _initCompleter.complete(callsSetup);
-    } catch (e, s) {
-      _initCompleter.completeError(e, s);
-      return;
-    }
-
-    try {
-      final launchCallData = await callKit.launchCallData();
-      _launchCallDataCompleter.complete(launchCallData);
-    } catch (e, s) {
-      _launchCallDataCompleter.completeError(e, s);
-    }
-
-    callKit.acceptedCallsStream.listen(
-      (callData) {
-        if (!mounted) {
-          _callData = callData;
-          return;
-        }
-
-        setState(() => _callData = callData);
-      },
-      onError: (Object e) {
-        if (!mounted) {
-          _callDataError = e;
-          return;
-        }
-
-        setState(() => _callDataError = e);
-      },
-    );
-  }
-
-  Future<void> _initIOSPhoneCalls() async {
-    final callKit = IosCallKitService();
+  Future<void> _initPhoneCalls() async {
+    final callKit = getIt.get<CallKitService>();
 
     try {
       final callsSetup = await callKit.initTelecomServices();
@@ -116,7 +72,7 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
 
   Future<void> _call() async {
     try {
-      final callerCallService = CallerCallService(AgoraVideoCallGateWay());
+      final callerCallService = getIt.get<CallerCallService>();
       final callEngine = await callerCallService.initiateCall(
         calleePhoneNumber: _phoneController.text,
       );
@@ -141,7 +97,7 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
     if (channelId == null) return;
 
     try {
-      final callerCallService = CalleeCallService(AgoraVideoCallGateWay());
+      final callerCallService = getIt.get<CalleeCallService>();
       final callEngine = await callerCallService.joinCall(
         channelId: channelId,
       );

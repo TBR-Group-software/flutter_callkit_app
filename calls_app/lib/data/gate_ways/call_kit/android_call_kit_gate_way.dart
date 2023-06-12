@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../models/call_data.dart';
 
+@lazySingleton
 class AndroidCallKitGateWay {
   AndroidCallKitGateWay() {
     _init();

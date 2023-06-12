@@ -3,9 +3,11 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_callkit_voximplant/flutter_callkit_voximplant.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../models/call_data.dart';
 
+@lazySingleton
 class IosCallKitGateWay {
   IosCallKitGateWay() {
     _init();

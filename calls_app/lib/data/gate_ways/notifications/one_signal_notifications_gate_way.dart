@@ -1,7 +1,9 @@
+import 'package:injectable/injectable.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../../environment_config.dart';
 
+@singleton
 class OneSignalNotificationsGateWay {
   static final _oneSignal = OneSignal.shared;
 

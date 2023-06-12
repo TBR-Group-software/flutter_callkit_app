@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../domain/phone_auth/user_phone_auth_service.dart';
+import '../../domain/phone_auth/phone_auth_service.dart';
+import '../../injection/injection.dart';
 import 'calls_setup_page.dart';
 
 class PhoneAuthenticationPage extends StatefulWidget {
-  const PhoneAuthenticationPage({Key? key}) : super(key: key);
+  const PhoneAuthenticationPage({super.key});
 
   @override
   State<PhoneAuthenticationPage> createState() =>
@@ -14,7 +15,7 @@ class PhoneAuthenticationPage extends StatefulWidget {
 }
 
 class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
-  final _phoneAuthService = UserPhoneAuthService();
+  final _phoneAuthService = getIt.get<PhoneAuthService>();
 
   final _phoneController = TextEditingController();
   final _smsController = TextEditingController();
@@ -44,10 +45,11 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
         _smsController.text,
       );
       setState(() => _phoneVerifiedState = 'Phone verified');
-      unawaited(
-        Navigator.push(
-          context,
-          MaterialPageRoute<CallsSetupPage>(builder: (_) => CallsSetupPage()),
+      // ignore: use_build_context_synchronously, unawaited_futures
+      Navigator.push(
+        context,
+        MaterialPageRoute<CallsSetupPage>(
+          builder: (_) => const CallsSetupPage(),
         ),
       );
     } catch (e) {

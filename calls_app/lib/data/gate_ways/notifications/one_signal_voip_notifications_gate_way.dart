@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../environment_config.dart';
 
+@singleton
 class OneSignalVoipNotificationsGateWay {
   final _dio = Dio(BaseOptions(baseUrl: 'https://onesignal.com/'));
 

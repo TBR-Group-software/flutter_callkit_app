@@ -1,19 +1,23 @@
+import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../data/gate_ways/calls/firebase_call_gate_way.dart';
-import '../../data/gate_ways/user/firebase_user_gate_way.dart';
+import '../../data/gate_ways/calls/call_gate_way.dart';
+import '../../data/gate_ways/user/user_gate_way.dart';
 import '../../data/gate_ways/video_call/video_call_gate_way.dart';
 import '../../data/models/call_engine.dart';
 import 'call_service.dart';
 
+@injectable
 class CallerCallService extends CallService {
-  CallerCallService(super.videoCallGateWay)
-      : _videoCallGateWay = videoCallGateWay;
+  CallerCallService(
+    super.videoCallGateWay,
+    this._userGateWay,
+    this._callGateWay,
+  ) : _videoCallGateWay = videoCallGateWay;
 
   final VideoCallGateWay _videoCallGateWay;
-
-  final _userGateWay = FirebaseUserGateWay();
-  final _callGateWay = FirebaseCallGateWay();
+  final UserGateWay _userGateWay;
+  final CallGateWay _callGateWay;
 
   /// Initiates the call with another user. Accepts [calleePhoneNumber] and if
   /// this phone was found then call notification will be send to this user.
