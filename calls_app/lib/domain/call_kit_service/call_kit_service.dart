@@ -9,10 +9,5 @@ abstract class CallKitService {
 
   Future<CallData?> launchCallData();
 
-  StreamSubscription<CallData> listenAcceptedCalls(
-    void Function(CallData callData) onData, {
-    void Function(Object e, StackTrace s)? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  });
+  Stream<CallData> get acceptedCallsStream;
 }

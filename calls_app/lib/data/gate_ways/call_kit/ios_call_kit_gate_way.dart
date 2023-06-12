@@ -23,6 +23,8 @@ class IosCallKitGateWay {
 
   final _acceptedCallsStream = StreamController<CallData>.broadcast();
 
+  Stream<CallData> get acceptedCallsStream => _acceptedCallsStream.stream;
+
   void _init() {
     _provider.performAnswerCallAction = _answerCallAction;
   }
@@ -67,19 +69,5 @@ class IosCallKitGateWay {
   Future<void> _endCall(String callId) async {
     await _callController
         .requestTransactionWithAction(FCXEndCallAction(callId));
-  }
-
-  StreamSubscription<CallData> listenAcceptedCalls(
-    void Function(CallData callData) onData, {
-    void Function(Object e, StackTrace s)? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return _acceptedCallsStream.stream.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
   }
 }
