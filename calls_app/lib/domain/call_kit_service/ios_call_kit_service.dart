@@ -43,17 +43,6 @@ class IosCallKitService implements CallKitService {
   }
 
   @override
-  StreamSubscription<CallData> listenAcceptedCalls(
-    void Function(CallData callData) onData, {
-    void Function(Object e, StackTrace s)? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return _iosCallKitGateWay.listenAcceptedCalls(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
-  }
+  Stream<CallData> get acceptedCallsStream =>
+      _iosCallKitGateWay.acceptedCallsStream;
 }

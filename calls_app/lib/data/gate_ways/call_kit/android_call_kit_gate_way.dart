@@ -34,6 +34,8 @@ class AndroidCallKitGateWay {
 
   final _acceptedCallsStream = StreamController<CallData>.broadcast();
 
+  Stream<CallData> get acceptedCallsStream => _acceptedCallsStream.stream;
+
   void _init() {
     _callForegroundChannel.setMethodCallHandler(_callForegroundChannelHandler);
   }
@@ -55,20 +57,6 @@ class AndroidCallKitGateWay {
         throw UnimplementedError('${call.method} is not implemented for '
             '${_callForegroundChannel.name}');
     }
-  }
-
-  StreamSubscription<CallData> listenAcceptedCalls(
-    void Function(CallData callData) onData, {
-    void Function(Object e, StackTrace s)? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return _acceptedCallsStream.stream.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
   }
 
   Future<CallData?> launchCallData() async {

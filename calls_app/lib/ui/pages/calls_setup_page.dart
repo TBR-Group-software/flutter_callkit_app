@@ -4,14 +4,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../data/gate_ways/firebase/firebase_initializer_gate_way.dart';
-import '../../data/gate_ways/user/firebase_user_gate_way.dart';
+import '../../data/gate_ways/video_call/agora_video_call_gate_way.dart';
 import '../../data/models/call_data.dart';
 import '../../domain/call_kit_service/android_call_kit_service.dart';
 import '../../domain/call_kit_service/ios_call_kit_service.dart';
+import '../../domain/calls/callee_call_service.dart';
+import '../../domain/calls/caller_call_service.dart';
+import 'video_call_page.dart';
 
 class CallsSetupPage extends StatefulWidget {
-  const CallsSetupPage({Key? key}) : super(key: key);
+  const CallsSetupPage({super.key});
 
   @override
   State<CallsSetupPage> createState() => _CallsSetupPageState();
@@ -20,6 +22,8 @@ class CallsSetupPage extends StatefulWidget {
 class _CallsSetupPageState extends State<CallsSetupPage> {
   final _initCompleter = Completer<bool>();
   final _launchCallDataCompleter = Completer<CallData?>();
+
+  final _phoneController = TextEditingController();
 
   CallData? _callData;
   Object? _callDataError;
@@ -52,7 +56,7 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
       _launchCallDataCompleter.completeError(e, s);
     }
 
-    callKit.listenAcceptedCalls(
+    callKit.acceptedCallsStream.listen(
       (callData) {
         if (!mounted) {
           _callData = callData;
@@ -61,7 +65,7 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
 
         setState(() => _callData = callData);
       },
-      onError: (Object e, _) {
+      onError: (Object e) {
         if (!mounted) {
           _callDataError = e;
           return;
@@ -90,7 +94,7 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
       _launchCallDataCompleter.completeError(e, s);
     }
 
-    callKit.listenAcceptedCalls(
+    callKit.acceptedCallsStream.listen(
       (callData) {
         if (!mounted) {
           _callData = callData;
@@ -99,7 +103,7 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
 
         setState(() => _callData = callData);
       },
-      onError: (Object e, _) {
+      onError: (Object e) {
         if (!mounted) {
           _callDataError = e;
           return;
@@ -111,21 +115,56 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
   }
 
   Future<void> _call() async {
-    final functions = await FirebaseInitializerGateWay.instance.functions;
-
-    final userGateWay = FirebaseUserGateWay();
-    final user = await userGateWay.getCurrentUser();
-    if (user == null) return;
-
     try {
-      await functions.httpsCallable('sendCallNotification').call<void>(
-        <String, dynamic>{
-          'calleeId': user.id,
-        },
+      final callerCallService = CallerCallService(AgoraVideoCallGateWay());
+      final callEngine = await callerCallService.initiateCall(
+        calleePhoneNumber: _phoneController.text,
+      );
+
+      if (callEngine == null) return;
+
+      // ignore: use_build_context_synchronously, unawaited_futures
+      Navigator.push<void>(
+        context,
+        MaterialPageRoute<VideoCallPage>(
+          builder: (_) =>
+              VideoCallPage(engine: callEngine, callService: callerCallService),
+        ),
       );
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  Future<void> _joinCall() async {
+    final channelId = _callData?.channelId;
+    if (channelId == null) return;
+
+    try {
+      final callerCallService = CalleeCallService(AgoraVideoCallGateWay());
+      final callEngine = await callerCallService.joinCall(
+        channelId: channelId,
+      );
+
+      if (callEngine == null) return;
+
+      // ignore: use_build_context_synchronously, unawaited_futures
+      Navigator.push<void>(
+        context,
+        MaterialPageRoute<VideoCallPage>(
+          builder: (_) =>
+              VideoCallPage(engine: callEngine, callService: callerCallService),
+        ),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
   }
 
   @override
@@ -171,8 +210,8 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
                 if (snapshot.error != null) {
                   return Text('Calls setup error - ${snapshot.error}');
                 }
-                return Column(
-                  children: const <Widget>[
+                return const Column(
+                  children: <Widget>[
                     Text('Calls setup'),
                     SizedBox(height: 10),
                     CircularProgressIndicator(),
@@ -180,9 +219,22 @@ class _CallsSetupPageState extends State<CallsSetupPage> {
                 );
               },
             ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _phoneController,
+                  ),
+                ),
+                TextButton(
+                  onPressed: _call,
+                  child: const Text('Call'),
+                ),
+              ],
+            ),
             TextButton(
-              onPressed: _call,
-              child: const Text('Call'),
+              onPressed: _joinCall,
+              child: const Text('Join Call'),
             ),
           ],
         ),

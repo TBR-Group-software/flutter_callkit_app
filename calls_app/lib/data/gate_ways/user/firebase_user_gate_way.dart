@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../models/user.dart';
 import '../firebase/firebase_initializer_gate_way.dart';
 import 'user_gate_way.dart';
@@ -26,7 +28,10 @@ class FirebaseUserGateWay implements UserGateWay {
       final userDoc = await userRef.get();
       if (userDoc.exists) return;
 
-      await userRef.set(<String, dynamic>{'phoneNumber': user.phoneNumber});
+      await userRef.set(<String, dynamic>{
+        'phoneNumber': user.phoneNumber,
+        'platform': Platform.operatingSystem,
+      });
     });
   }
 

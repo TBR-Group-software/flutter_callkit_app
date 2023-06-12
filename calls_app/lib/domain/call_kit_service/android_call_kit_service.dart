@@ -53,17 +53,6 @@ class AndroidCallKitService implements CallKitService {
   Future<CallData?> launchCallData() => _androidCallKit.launchCallData();
 
   @override
-  StreamSubscription<CallData> listenAcceptedCalls(
-    void Function(CallData callData) onData, {
-    void Function(Object e, StackTrace s)? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return _androidCallKit.listenAcceptedCalls(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
-  }
+  Stream<CallData> get acceptedCallsStream =>
+      _androidCallKit.acceptedCallsStream;
 }
