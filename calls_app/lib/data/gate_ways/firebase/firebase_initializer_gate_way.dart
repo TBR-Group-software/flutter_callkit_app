@@ -12,8 +12,6 @@ class FirebaseInitializerGateWay {
     _init();
   }
 
-  // static final _instance = FirebaseInitializerGateWay._();
-
   final _firebaseCompleter = Completer<FirebaseApp>();
 
   Future<void> _init() async {
@@ -24,8 +22,6 @@ class FirebaseInitializerGateWay {
       _firebaseCompleter.completeError(e, s);
     }
   }
-
-  // static FirebaseInitializerGateWay get instance => _instance;
 
   Future<FirebaseAuth> get firebaseAuth async {
     await _firebaseCompleter.future;

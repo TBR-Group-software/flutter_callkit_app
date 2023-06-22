@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'pages/phone_authentication_page.dart';
+import 'pages/initial_page.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -17,7 +17,7 @@ class _AppState extends State<App> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const PhoneAuthenticationPage(),
+      home: InitialPage(),
     );
   }
 }

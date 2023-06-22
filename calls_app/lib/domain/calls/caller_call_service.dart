@@ -5,6 +5,7 @@ import '../../data/gate_ways/calls/call_gate_way.dart';
 import '../../data/gate_ways/user/user_gate_way.dart';
 import '../../data/gate_ways/video_call/video_call_gate_way.dart';
 import '../../data/models/call_engine.dart';
+import '../../utils/parse_phone_number.dart';
 import 'call_service.dart';
 
 @injectable
@@ -32,7 +33,7 @@ class CallerCallService extends CallService {
   Future<CallEngine?> initiateCall({
     required String calleePhoneNumber,
   }) async {
-    final phone = _parsePhoneNumber(calleePhoneNumber);
+    final phone = parsePhoneNumber(calleePhoneNumber);
     if (phone == null) return null;
 
     final phoneString = '+$phone';
@@ -58,14 +59,5 @@ class CallerCallService extends CallService {
     );
 
     return engine;
-  }
-
-  /// Converts the phone number from +380990887766 string to 380990887766
-  /// integer.
-  int? _parsePhoneNumber(String phoneNumber) {
-    final phoneNumberWithoutCharacters =
-        phoneNumber.replaceAll(RegExp('[^0-9]'), '');
-    final phone = int.tryParse(phoneNumberWithoutCharacters);
-    return phone;
   }
 }

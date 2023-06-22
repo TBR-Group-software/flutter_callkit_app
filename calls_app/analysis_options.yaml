@@ -88,3 +88,4 @@ linter:
     avoid_relative_lib_imports: false
     always_use_package_imports: false
     prefer_relative_imports: true
+    one_member_abstracts: false

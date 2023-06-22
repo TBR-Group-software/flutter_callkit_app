@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/phone_auth/phone_auth_service.dart';
 import '../../injection/injection.dart';
+import '../bloc/phone_auth/phone_auth_bloc.dart';
 import 'calls_setup_page.dart';
 
 class PhoneAuthenticationPage extends StatefulWidget {
@@ -15,78 +16,80 @@ class PhoneAuthenticationPage extends StatefulWidget {
 }
 
 class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
-  final _phoneAuthService = getIt.get<PhoneAuthService>();
+  final _phoneAuthBloc = getIt.get<PhoneAuthBloc>();
 
   final _phoneController = TextEditingController();
   final _smsController = TextEditingController();
 
-  String? _sendCodeState;
-  String? _verificationId;
-
-  String? _phoneVerifiedState;
-
   Future<void> _verifyPhone() async {
-    try {
-      final codeSentData =
-          await _phoneAuthService.verifyPhoneNumber(_phoneController.text);
-      setState(() {
-        _verificationId = codeSentData.verificationId;
-        _sendCodeState = 'Code sent, verificationId - $_verificationId';
-      });
-    } catch (e) {
-      setState(() => _sendCodeState = e.toString());
-    }
+    _phoneAuthBloc.add(PhoneAuthVerifyPhone(_phoneController.text));
   }
 
   Future<void> _sendCode() async {
-    try {
-      await _phoneAuthService.signInWithSmsCode(
-        _verificationId!,
-        _smsController.text,
-      );
-      setState(() => _phoneVerifiedState = 'Phone verified');
-      // ignore: use_build_context_synchronously, unawaited_futures
-      Navigator.push(
-        context,
-        MaterialPageRoute<CallsSetupPage>(
-          builder: (_) => const CallsSetupPage(),
-        ),
-      );
-    } catch (e) {
-      setState(() => _phoneVerifiedState = e.toString());
-    }
+    _phoneAuthBloc.add(PhoneAuthVerifyCode(_smsController.text));
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _smsController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
+      body: BlocConsumer<PhoneAuthBloc, PhoneAuthState>(
+        bloc: _phoneAuthBloc,
+        listener: (context, state) {
+          if (state is PhoneAuthPhoneVerified) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<CallsSetupPage>(
+                builder: (_) => const CallsSetupPage(),
               ),
-              TextButton(
-                onPressed: _verifyPhone,
-                child: const Text('Verify phone'),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  TextButton(
+                    onPressed: _verifyPhone,
+                    child: const Text('Verify phone'),
+                  ),
+                  if (state is PhoneAuthCodeSent)
+                    Text(
+                      'Code sent, verificationId - '
+                      '${state.codeSentData.verificationId}',
+                    )
+                  else if (state is PhoneAuthVerifyPhoneError)
+                    Text(state.error.toString()),
+                  TextField(
+                    controller: _smsController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextButton(
+                    onPressed: _sendCode,
+                    child: const Text('Send code'),
+                  ),
+                  if (state is PhoneAuthPhoneVerified)
+                    const Text('Phone verified')
+                  else if (state is PhoneAuthVerifyCodeError)
+                    Text(state.error.toString()),
+                ],
               ),
-              if (_sendCodeState != null) Text(_sendCodeState!),
-              TextField(
-                controller: _smsController,
-                keyboardType: TextInputType.number,
-              ),
-              TextButton(
-                onPressed: _sendCode,
-                child: const Text('Send code'),
-              ),
-              if (_phoneVerifiedState != null) Text(_phoneVerifiedState!),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
