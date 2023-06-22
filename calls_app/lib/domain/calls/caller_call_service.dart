@@ -1,19 +1,24 @@
+import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../data/gate_ways/calls/firebase_call_gate_way.dart';
-import '../../data/gate_ways/user/firebase_user_gate_way.dart';
+import '../../data/gate_ways/calls/call_gate_way.dart';
+import '../../data/gate_ways/user/user_gate_way.dart';
 import '../../data/gate_ways/video_call/video_call_gate_way.dart';
 import '../../data/models/call_engine.dart';
+import '../../utils/parse_phone_number.dart';
 import 'call_service.dart';
 
+@injectable
 class CallerCallService extends CallService {
-  CallerCallService(super.videoCallGateWay)
-      : _videoCallGateWay = videoCallGateWay;
+  CallerCallService(
+    super.videoCallGateWay,
+    this._userGateWay,
+    this._callGateWay,
+  ) : _videoCallGateWay = videoCallGateWay;
 
   final VideoCallGateWay _videoCallGateWay;
-
-  final _userGateWay = FirebaseUserGateWay();
-  final _callGateWay = FirebaseCallGateWay();
+  final UserGateWay _userGateWay;
+  final CallGateWay _callGateWay;
 
   /// Initiates the call with another user. Accepts [calleePhoneNumber] and if
   /// this phone was found then call notification will be send to this user.
@@ -28,7 +33,7 @@ class CallerCallService extends CallService {
   Future<CallEngine?> initiateCall({
     required String calleePhoneNumber,
   }) async {
-    final phone = _parsePhoneNumber(calleePhoneNumber);
+    final phone = parsePhoneNumber(calleePhoneNumber);
     if (phone == null) return null;
 
     final phoneString = '+$phone';
@@ -54,14 +59,5 @@ class CallerCallService extends CallService {
     );
 
     return engine;
-  }
-
-  /// Converts the phone number from +380990887766 string to 380990887766
-  /// integer.
-  int? _parsePhoneNumber(String phoneNumber) {
-    final phoneNumberWithoutCharacters =
-        phoneNumber.replaceAll(RegExp('[^0-9]'), '');
-    final phone = int.tryParse(phoneNumberWithoutCharacters);
-    return phone;
   }
 }

@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../environment_config.dart';
 import '../../models/call_engine.dart';
 import '../../models/call_error.dart';
 import 'video_call_gate_way.dart';
 
+@Injectable(as: VideoCallGateWay)
 class AgoraVideoCallGateWay implements VideoCallGateWay {
   AgoraVideoCallGateWay() {
     _init();

@@ -1,102 +1,103 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/models/call_engine.dart';
-import '../../domain/calls/call_service.dart';
+import '../../injection/injection.dart';
+import '../bloc/call/call_bloc.dart';
 
 class VideoCallPage extends StatefulWidget {
-  const VideoCallPage({
-    required this.engine,
-    required this.callService,
-    super.key,
-  });
-
-  final CallEngine engine;
-  final CallService callService;
+  const VideoCallPage({super.key});
 
   @override
   State<VideoCallPage> createState() => _VideoCallPageState();
 }
 
 class _VideoCallPageState extends State<VideoCallPage> {
-  Future<void> _leave() async {
-    await widget.callService.leaveCall();
+  final _callBlock = getIt.get<CallBloc>();
+
+  void _leave() {
+    _callBlock.add(LeaveCall());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Agora Video Call'),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: _RemoteVideo(engine: widget.engine),
+    return BlocConsumer<CallBloc, CallState>(
+      bloc: _callBlock,
+      listener: (context, state) {
+        if (state is CallEnded) {
+          Navigator.of(context).pop();
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Agora Video Call'),
           ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
-              width: 100,
-              height: 150,
-              child: Center(
-                child: AgoraVideoView(
-                  controller: VideoViewController(
-                    rtcEngine: widget.engine.rtcEngine,
-                    canvas: const VideoCanvas(uid: 0),
+          body: Stack(
+            children: [
+              if (state is CallActive) ...[
+                Center(
+                  child: _RemoteVideo(callActiveState: state),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    width: 100,
+                    height: 150,
+                    child: Center(
+                      child: AgoraVideoView(
+                        controller: VideoViewController(
+                          rtcEngine: state.rtcEngine,
+                          canvas: const VideoCanvas(uid: 0),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+              ] else if (state is CallInitializeError)
+                Center(child: Text(state.error.toString()))
+              else
+                const Center(child: CircularProgressIndicator()),
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: _leave,
+                  child: const Text('leave'),
+                ),
               ),
-            ),
+            ],
           ),
-          Align(
-            alignment: Alignment.topRight,
-            child: TextButton(
-              onPressed: _leave,
-              child: const Text('leave'),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
 class _RemoteVideo extends StatelessWidget {
   const _RemoteVideo({
-    required this.engine,
-  });
+    required CallActive callActiveState,
+  }) : _callActiveState = callActiveState;
 
-  final CallEngine engine;
+  final CallActive _callActiveState;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      future: engine.userJoinedStream.first,
-      builder: (context, userJoinedSnapshot) {
-        return StreamBuilder<int>(
-          stream: engine.remoteUserJoinedStream,
-          builder: (context, remoteUserJoinedSnapshot) {
-            final channelId = userJoinedSnapshot.data;
-            final remoteUserId = remoteUserJoinedSnapshot.data;
+    final channelId = _callActiveState.channelId;
+    final remoteUsers = _callActiveState.remoteUsers;
 
-            if (channelId != null && remoteUserId != null) {
-              return AgoraVideoView(
-                controller: VideoViewController.remote(
-                  rtcEngine: engine.rtcEngine,
-                  canvas: VideoCanvas(uid: remoteUserId),
-                  connection: RtcConnection(channelId: channelId),
-                ),
-              );
-            }
+    if (channelId != null && remoteUsers.isNotEmpty) {
+      return AgoraVideoView(
+        controller: VideoViewController.remote(
+          rtcEngine: _callActiveState.rtcEngine,
+          canvas: VideoCanvas(uid: remoteUsers.first),
+          connection: RtcConnection(channelId: channelId),
+        ),
+      );
+    }
 
-            return const Text(
-              'Please wait for remote user to join',
-              textAlign: TextAlign.center,
-            );
-          },
-        );
-      },
+    return const Text(
+      'Please wait for remote user to join',
+      textAlign: TextAlign.center,
     );
   }
 }

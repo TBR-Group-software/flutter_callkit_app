@@ -1,11 +1,16 @@
 import 'dart:io';
 
+import 'package:injectable/injectable.dart';
+
 import '../../models/user.dart';
 import '../firebase/firebase_initializer_gate_way.dart';
 import 'user_gate_way.dart';
 
+@LazySingleton(as: UserGateWay)
 class FirebaseUserGateWay implements UserGateWay {
-  final _firebaseInitializer = FirebaseInitializerGateWay.instance;
+  FirebaseUserGateWay(this._firebaseInitializer);
+
+  final FirebaseInitializerGateWay _firebaseInitializer;
 
   static const _userCollection = 'users';
 

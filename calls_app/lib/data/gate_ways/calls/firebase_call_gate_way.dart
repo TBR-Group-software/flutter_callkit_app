@@ -1,9 +1,14 @@
+import 'package:injectable/injectable.dart';
+
 import '../../models/channel_data.dart';
 import '../firebase/firebase_initializer_gate_way.dart';
 import 'call_gate_way.dart';
 
+@LazySingleton(as: CallGateWay)
 class FirebaseCallGateWay implements CallGateWay {
-  final _firebaseInitializer = FirebaseInitializerGateWay.instance;
+  FirebaseCallGateWay(this._firebaseInitializer);
+
+  final FirebaseInitializerGateWay _firebaseInitializer;
 
   final _sendCallNotificationEndpoint = 'sendCallNotification';
   final _crateCallTokenEndpoint = 'crateCallToken';

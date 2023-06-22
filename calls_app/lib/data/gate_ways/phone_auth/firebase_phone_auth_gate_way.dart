@@ -1,13 +1,17 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../models/code_sent_data.dart';
 import '../firebase/firebase_initializer_gate_way.dart';
 import 'phone_auth_gate_way.dart';
 
+@LazySingleton(as: PhoneAuthGateWay)
 class FirebasePhoneAuthGateWay implements PhoneAuthGateWay {
-  final _firebaseInitializer = FirebaseInitializerGateWay.instance;
+  FirebasePhoneAuthGateWay(this._firebaseInitializer);
+
+  final FirebaseInitializerGateWay _firebaseInitializer;
 
   @override
   Future<CodeSentData> verifyPhoneNumber(

@@ -4,15 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class FirebaseInitializerGateWay {
-  FirebaseInitializerGateWay._();
-
-  static final _instance = FirebaseInitializerGateWay._();
+  FirebaseInitializerGateWay() {
+    _init();
+  }
 
   final _firebaseCompleter = Completer<FirebaseApp>();
 
-  Future<void> init() async {
+  Future<void> _init() async {
     try {
       final app = await Firebase.initializeApp();
       _firebaseCompleter.complete(app);
@@ -20,8 +22,6 @@ class FirebaseInitializerGateWay {
       _firebaseCompleter.completeError(e, s);
     }
   }
-
-  static FirebaseInitializerGateWay get instance => _instance;
 
   Future<FirebaseAuth> get firebaseAuth async {
     await _firebaseCompleter.future;
