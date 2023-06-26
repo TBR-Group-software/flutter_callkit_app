@@ -9,7 +9,7 @@ InputDecoration phoneInputDecoration({
   return InputDecoration(
     contentPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
     filled: true,
-    fillColor: AppColors.white2.withOpacity(0.5),
+    fillColor: AppColors.white2,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(9),
       borderSide: BorderSide.none,

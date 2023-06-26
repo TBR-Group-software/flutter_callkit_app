@@ -63,6 +63,8 @@ class CallBloc extends Bloc<CallEvent, CallState> {
   ) async {
     if (state is! CallInitial) return;
 
+    emit(CallInitializing());
+
     try {
       final callerCallService = getIt.get<CallerCallService>();
       final callEngine = await callerCallService.initiateCall(
@@ -100,6 +102,8 @@ class CallBloc extends Bloc<CallEvent, CallState> {
       emit(CallInitializeError('Channel id is null'));
       return;
     }
+
+    emit(CallInitializing());
 
     try {
       final callerCallService = getIt.get<CalleeCallService>();

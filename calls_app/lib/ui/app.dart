@@ -22,6 +22,20 @@ class _AppState extends State<App> {
         fontFamily: AppFonts.poppins,
         scaffoldBackgroundColor: AppColors.white,
         textTheme: const TextTheme(
+          titleMedium: TextStyle(
+            fontFamily: AppFonts.poppins,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: AppColors.black,
+            height: 1.5,
+          ),
+          titleSmall: TextStyle(
+            fontFamily: AppFonts.poppins,
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: AppColors.black,
+            height: 1.5,
+          ),
           bodyMedium: TextStyle(
             fontFamily: AppFonts.poppins,
             fontSize: 14,

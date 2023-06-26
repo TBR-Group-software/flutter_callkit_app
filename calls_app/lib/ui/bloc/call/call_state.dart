@@ -6,14 +6,20 @@ abstract class CallState {}
 /// Indicates that there is no call currently.
 class CallInitial extends CallState {}
 
-/// Indicates that the error occurred during call initialization.
+/// Indicates that the error occurred during call initialization. It extends
+/// from [CallInitial], so you can try to initialize call again.
 class CallInitializeError extends CallInitial {
   CallInitializeError(this.error);
 
   final Object error;
 }
 
-/// Indicates that the user is in a call now.
+/// Indicates that the call is initializing now. You can't initialize another
+/// call when current is initializing.
+class CallInitializing extends CallState {}
+
+/// Indicates that the user is in a call now. You can initialize another call
+/// only after current call is ended.
 class CallActive extends CallState {
   CallActive(
     this._callService,

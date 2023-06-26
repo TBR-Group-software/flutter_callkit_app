@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../gen/assets.gen.dart';
 import '../../injection/injection.dart';
 import '../bloc/user_log_in/user_log_in_cubit.dart';
-import 'calls_setup_page.dart';
+import 'navigation_page.dart';
 import 'phone_authentication_page.dart';
 
 class InitialPage extends StatelessWidget {
@@ -27,8 +27,8 @@ class InitialPage extends StatelessWidget {
           listener: (context, state) {
             if (state is UserLoggedIn) {
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute<CallsSetupPage>(
-                  builder: (_) => const CallsSetupPage(),
+                MaterialPageRoute<NavigationPage>(
+                  builder: (_) => NavigationPage(),
                 ),
               );
             } else if (state is UserLoggedOut) {

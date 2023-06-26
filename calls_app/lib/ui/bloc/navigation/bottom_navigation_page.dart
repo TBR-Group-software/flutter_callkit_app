@@ -1,0 +1,4 @@
+enum BottomNavigationPage {
+  calls,
+  settings;
+}

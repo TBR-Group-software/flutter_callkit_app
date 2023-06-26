@@ -10,7 +10,8 @@ import '../../gen/colors.gen.dart';
 import '../../injection/injection.dart';
 import '../bloc/phone_auth/phone_auth_bloc.dart';
 import '../theme/input_decoration.dart';
-import 'calls_setup_page.dart';
+import '../widgets/phone_input.dart';
+import 'navigation_page.dart';
 
 class PhoneAuthenticationPage extends StatefulWidget {
   const PhoneAuthenticationPage({super.key});
@@ -44,8 +45,8 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
     if (state is PhoneAuthPhoneVerified) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute<CallsSetupPage>(
-          builder: (_) => const CallsSetupPage(),
+        MaterialPageRoute<NavigationPage>(
+          builder: (_) => NavigationPage(),
         ),
       );
     }
@@ -96,11 +97,16 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
                         onDone: _sendCode,
                       );
                     }
-                    return _PhoneInput(
-                      state: state,
+                    return PhoneInput(
+                      title: 'Enter your phone number',
                       focus: _phoneFocus,
                       controller: _phoneController,
-                      onSend: _verifyPhone,
+                      isLoading: state is PhoneAuthVerifyPhoneLoading,
+                      buttonText: 'Send',
+                      onEnter: _verifyPhone,
+                      errorText: state is PhoneAuthVerifyPhoneError
+                          ? state.error.toString()
+                          : null,
                     );
                   },
                 ),
@@ -134,82 +140,6 @@ class _PhoneAuthenticationPageState extends State<PhoneAuthenticationPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PhoneInput extends StatelessWidget {
-  const _PhoneInput({
-    required PhoneAuthState state,
-    required FocusNode focus,
-    required TextEditingController controller,
-    required VoidCallback onSend,
-  })  : _state = state,
-        _focus = focus,
-        _controller = controller,
-        _onSend = onSend;
-
-  final PhoneAuthState _state;
-  final FocusNode _focus;
-  final TextEditingController _controller;
-  final VoidCallback _onSend;
-
-  @override
-  Widget build(BuildContext context) {
-    final state = _state;
-
-    return Column(
-      children: [
-        Text(
-          'Enter your phone number',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 26),
-        TextField(
-          focusNode: _focus,
-          controller: _controller,
-          keyboardType: TextInputType.phone,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 14,
-                letterSpacing: 1.5,
-              ),
-          inputFormatters: [
-            MaskTextInputFormatter(
-              mask: '+ ### ### ### ### ###',
-              filter: {'#': RegExp('[0-9]')},
-            ),
-          ],
-          decoration: phoneInputDecoration(
-            hintText: '+ --- --- --- --- ---',
-            hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 14,
-                  letterSpacing: 1.5,
-                ),
-          ),
-        ),
-        if (state is PhoneAuthVerifyPhoneError) ...[
-          const SizedBox(height: 16),
-          Text(
-            state.error.toString(),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
-                  color: AppColors.red,
-                ),
-          ),
-        ],
-        const SizedBox(height: 67),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: ElevatedButton(
-            onPressed: state is PhoneAuthVerifyPhoneLoading ? null : _onSend,
-            child: state is PhoneAuthVerifyPhoneLoading
-                ? const Center(child: CircularProgressIndicator())
-                : const Text('Send'),
-          ),
-        ),
-      ],
     );
   }
 }
