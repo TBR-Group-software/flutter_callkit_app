@@ -129,7 +129,7 @@ class _AppBar extends StatelessWidget {
             children: [
               const SizedBox(height: 2),
               Text(
-                'Video Call',
+                _callActiveState.interlocutorName ?? '',
                 style: Theme.of(context).primaryTextTheme.titleLarge?.copyWith(
                       color: AppColors.white,
                     ),

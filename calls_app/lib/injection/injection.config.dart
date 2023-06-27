@@ -38,10 +38,11 @@ import '../domain/phone_auth/user_phone_auth_service.dart' as _i30;
 import '../domain/user/user_service.dart' as _i16;
 import '../domain/user/user_service_impl.dart' as _i17;
 import '../ui/bloc/call/call_bloc.dart' as _i21;
-import '../ui/bloc/call_kit/call_kit_cubit.dart' as _i32;
+import '../ui/bloc/call_kit/call_kit_cubit.dart' as _i33;
 import '../ui/bloc/navigation/navigation_cubit.dart' as _i9;
-import '../ui/bloc/phone_auth/phone_auth_bloc.dart' as _i33;
+import '../ui/bloc/phone_auth/phone_auth_bloc.dart' as _i34;
 import '../ui/bloc/user_log_in/user_log_in_cubit.dart' as _i31;
+import '../ui/bloc/user_personal_data/user_personal_data_cubit.dart' as _i32;
 import '../ui/controllers/call_controller.dart' as _i4;
 import '../ui/controllers/call_data_error_controller.dart' as _i5;
 import '../ui/controllers/call_error_controller.dart' as _i6;
@@ -121,13 +122,15 @@ extension GetItInjectableX on _i1.GetIt {
         ));
     gh.factory<_i31.UserLogInCubit>(
         () => _i31.UserLogInCubit(gh<_i16.UserService>()));
-    gh.lazySingleton<_i32.CallKitCubit>(() => _i32.CallKitCubit(
+    gh.factory<_i32.UserPersonalDataCubit>(
+        () => _i32.UserPersonalDataCubit(gh<_i16.UserService>()));
+    gh.lazySingleton<_i33.CallKitCubit>(() => _i33.CallKitCubit(
           gh<_i4.CallController>(),
           gh<_i5.CallDataErrorController>(),
           gh<_i24.CallKitService>(),
         ));
-    gh.factory<_i33.PhoneAuthBloc>(
-        () => _i33.PhoneAuthBloc(gh<_i29.PhoneAuthService>()));
+    gh.factory<_i34.PhoneAuthBloc>(
+        () => _i34.PhoneAuthBloc(gh<_i29.PhoneAuthService>()));
     return this;
   }
 }

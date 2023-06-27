@@ -26,6 +26,7 @@ class CallActive extends CallState {
     this._engine, {
     required this.remoteUsers,
     this.channelId,
+    this.interlocutorName,
   });
 
   final CallService _callService;
@@ -36,6 +37,9 @@ class CallActive extends CallState {
   /// Contains the channelId of the call. Will be set only after user
   /// successfully joins the channel.
   final String? channelId;
+
+  /// The name of your caller or callee.
+  final String? interlocutorName;
 
   RtcEngine get rtcEngine => _engine.rtcEngine;
 
@@ -48,6 +52,7 @@ class CallActive extends CallState {
       _engine,
       remoteUsers: remoteUsers ?? this.remoteUsers,
       channelId: channelId ?? this.channelId,
+      interlocutorName: interlocutorName,
     );
   }
 }

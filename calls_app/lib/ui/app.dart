@@ -49,6 +49,12 @@ class _AppState extends State<App> {
             fontWeight: FontWeight.w400,
             color: AppColors.white,
           ),
+          labelMedium: TextStyle(
+            fontFamily: AppFonts.proximaNova,
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: AppColors.black,
+          ),
         ),
         primaryTextTheme: const TextTheme(
           titleLarge: TextStyle(

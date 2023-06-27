@@ -9,12 +9,46 @@ import '../../injection/injection.dart';
 import '../bloc/call_kit/call_kit_cubit.dart';
 import '../bloc/navigation/bottom_navigation_page.dart';
 import '../bloc/navigation/navigation_cubit.dart';
+import '../bloc/user_personal_data/user_personal_data_cubit.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  final _userPersonalDataCubit = getIt.get<UserPersonalDataCubit>();
+
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
+  void _updateNameControllers(BuildContext _, UserPersonalDataState state) {
+    if (state is! UserPersonalDataLoaded) return;
+
+    final nameSplit = state.user.name?.split(' ');
+    if (nameSplit == null || nameSplit.isEmpty) return;
+
+    _firstNameController.text = nameSplit.first;
+
+    if (nameSplit.length > 1) {
+      _lastNameController.text = nameSplit.last;
+    }
+  }
+
   void _save() {
-    // TODO(Nikita): Implement saving.
+    _userPersonalDataCubit.changeUserName(
+      _firstNameController.text.trim(),
+      _lastNameController.text.trim(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -30,17 +64,38 @@ class SettingsPage extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                _AppBar(onSave: _save),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: _CallKitSetup(),
-                ),
-                const Spacer(),
-              ],
+            child: BlocConsumer<UserPersonalDataCubit, UserPersonalDataState>(
+              bloc: _userPersonalDataCubit,
+              listener: _updateNameControllers,
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    _AppBar(
+                      onSave: state is! UserPersonalDataLoading &&
+                              state is! UserPersonalDataLoadingError
+                          ? _save
+                          : null,
+                      loading: state is UserPersonalDataUpdating,
+                    ),
+                    const SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _PersonalName(
+                        state: state,
+                        firstNameController: _firstNameController,
+                        lastNameController: _lastNameController,
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: _CallKitSetup(),
+                    ),
+                    const Spacer(),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -50,11 +105,16 @@ class SettingsPage extends StatelessWidget {
 }
 
 class _AppBar extends StatelessWidget {
-  _AppBar({required VoidCallback onSave}) : _onSave = onSave;
+  _AppBar({
+    required VoidCallback? onSave,
+    required bool loading,
+  })  : _onSave = onSave,
+        _loading = loading;
 
   final _navigationCubit = getIt.get<NavigationCubit>();
 
-  final VoidCallback _onSave;
+  final VoidCallback? _onSave;
+  final bool _loading;
 
   @override
   Widget build(BuildContext context) {
@@ -83,18 +143,107 @@ class _AppBar extends StatelessWidget {
         Expanded(
           child: Align(
             alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: _onSave,
-              child: Text(
-                'Save',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.green,
+            child: _loading
+                ? const CircularProgressIndicator()
+                : TextButton(
+                    onPressed: _onSave,
+                    child: Text(
+                      'Save',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppColors.green,
+                          ),
                     ),
-              ),
-            ),
+                  ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _PersonalName extends StatelessWidget {
+  const _PersonalName({
+    required UserPersonalDataState state,
+    required TextEditingController firstNameController,
+    required TextEditingController lastNameController,
+  })  : _state = state,
+        _firstNameController = firstNameController,
+        _lastNameController = lastNameController;
+
+  final UserPersonalDataState _state;
+  final TextEditingController _firstNameController;
+  final TextEditingController _lastNameController;
+
+  InputDecoration _textFieldDecoration(BuildContext context) {
+    return InputDecoration(
+      helperStyle: Theme.of(context)
+          .textTheme
+          .labelMedium
+          ?.copyWith(color: AppColors.gray),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.gray),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = _state;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _firstNameController,
+                  style: Theme.of(context).textTheme.labelMedium,
+                  decoration: _textFieldDecoration(context).copyWith(
+                    hintText: 'First Name',
+                  ),
+                ),
+              ),
+              const SizedBox(width: 32),
+              Expanded(
+                child: TextField(
+                  controller: _lastNameController,
+                  style: Theme.of(context).textTheme.labelMedium,
+                  decoration: _textFieldDecoration(context).copyWith(
+                    hintText: 'Last Name',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (state is UserPersonalDataLoadingError)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                state.error.toString(),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .primaryTextTheme
+                    .bodyMedium
+                    ?.copyWith(color: AppColors.red),
+              ),
+            ),
+          if (state is UserPersonalDataUpdatingError)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                state.error.toString(),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .primaryTextTheme
+                    .bodyMedium
+                    ?.copyWith(color: AppColors.red),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -141,6 +290,7 @@ class _CallKitSetup extends StatelessWidget {
               ] else if (state is CallKitError) ...[
                 Text(
                   state.error.toString(),
+                  textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .primaryTextTheme
                       .bodyMedium
