@@ -5,6 +5,7 @@ import '../../data/gate_ways/calls/call_gate_way.dart';
 import '../../data/gate_ways/user/user_gate_way.dart';
 import '../../data/gate_ways/video_call/video_call_gate_way.dart';
 import '../../data/models/call_engine.dart';
+import '../../data/models/user.dart';
 import '../../utils/parse_phone_number.dart';
 import 'call_service.dart';
 
@@ -30,7 +31,7 @@ class CallerCallService extends CallService {
   /// - there is no user with such [calleePhoneNumber]
   /// - the user rejected to provide microphone permission
   /// - the user rejected to provide camera permission.
-  Future<CallEngine?> initiateCall({
+  Future<({User callee, CallEngine engine})?> initiateCall({
     required String calleePhoneNumber,
   }) async {
     final phone = parsePhoneNumber(calleePhoneNumber);
@@ -58,6 +59,6 @@ class CallerCallService extends CallService {
       userId: user.id,
     );
 
-    return engine;
+    return (callee: callee, engine: engine);
   }
 }

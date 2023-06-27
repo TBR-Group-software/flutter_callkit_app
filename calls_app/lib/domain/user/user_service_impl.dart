@@ -12,4 +12,11 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<User?> getCurrentUser() => _userGateWay.getCurrentUser();
+
+  @override
+  Future<void> addUserName(String id, String name) =>
+      _userGateWay.addUserName(id, name);
+
+  @override
+  Future<User?> findUserById(String id) => _userGateWay.findUserById(id);
 }

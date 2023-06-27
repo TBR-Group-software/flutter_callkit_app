@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../models/user.dart';
@@ -41,6 +42,17 @@ class FirebaseUserGateWay implements UserGateWay {
   }
 
   @override
+  Future<void> addUserName(String id, String name) async {
+    final firestore = await _firebaseInitializer.firestore;
+
+    final userRef = firestore.collection(_userCollection).doc(id);
+    await userRef.set(
+      <String, dynamic>{'name': name},
+      SetOptions(merge: true),
+    );
+  }
+
+  @override
   Future<User?> findUserByPhoneNumber(String phoneNumber) async {
     final firestore = await _firebaseInitializer.firestore;
 
@@ -54,5 +66,17 @@ class FirebaseUserGateWay implements UserGateWay {
 
     final userDoc = userDocs.docs.first;
     return User.fromJson(userDoc.id, userDoc.data());
+  }
+
+  @override
+  Future<User?> findUserById(String id) async {
+    final firestore = await _firebaseInitializer.firestore;
+
+    final userDoc = await firestore.collection(_userCollection).doc(id).get();
+
+    final userData = userDoc.data();
+    if (userData == null) return null;
+
+    return User.fromJson(userDoc.id, userData);
   }
 }

@@ -17,6 +17,7 @@ import '../../controllers/call_controller.dart';
 import '../../controllers/call_error_controller.dart';
 
 part 'call_event.dart';
+
 part 'call_state.dart';
 
 @lazySingleton
@@ -67,11 +68,11 @@ class CallBloc extends Bloc<CallEvent, CallState> {
 
     try {
       final callerCallService = getIt.get<CallerCallService>();
-      final callEngine = await callerCallService.initiateCall(
+      final call = await callerCallService.initiateCall(
         calleePhoneNumber: event.phoneNumber,
       );
 
-      if (callEngine == null) {
+      if (call == null) {
         emit(CallInitializeError('Failed to initialize call'));
         return;
       }
@@ -79,12 +80,13 @@ class CallBloc extends Bloc<CallEvent, CallState> {
       emit(
         CallActive(
           callerCallService,
-          callEngine,
+          call.engine,
           remoteUsers: const [],
+          interlocutorName: call.callee.name,
         ),
       );
 
-      _subscribeOnCallEvents(callEngine);
+      _subscribeOnCallEvents(call.engine);
     } catch (e) {
       emit(CallInitializeError(e));
     }
@@ -121,6 +123,7 @@ class CallBloc extends Bloc<CallEvent, CallState> {
           callerCallService,
           callEngine,
           remoteUsers: const [],
+          interlocutorName: event.callData.callerName,
         ),
       );
 
