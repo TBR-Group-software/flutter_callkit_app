@@ -1,0 +1,11 @@
+environment_config:
+  path: environment_config.dart
+  class: EnvironmentConfig
+
+  fields:
+    oneSignalKey:
+      default: YOUR_ONE_SIGNAL_KEY
+    oneSignalVoipKey:
+      default: YOUR_ONE_SIGNAL_VOIP_KEY
+    agoraRtcAppId:
+      default: YOUR_AGORA_APP_ID
