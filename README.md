@@ -6,7 +6,10 @@ project consists of 2 parts: the [mobile app](calls_app) and the [backend](calls
 The mobile app was built with Flutter and works both on Android and iOS. The backend was built with Firebase and uses
 Cloud Functions written in TypeScript.
 
-// TODO: Add 3 gifs: sign in, receiving a call, answering a call
+<p>
+  <img alt="Sign in" src="assets/sign_in.gif" width="250"/>
+  <img alt="Phone call" src="assets/phone_call.gif" width="250"/>
+</p>
 
 ## Features
 
@@ -60,7 +63,10 @@ and [Connection](calls_app/android/app/src/main/kotlin/com/tbrgroup/in_app_calls
 are written. On iOS the [flutter_callkit_voximplant](https://pub.dev/packages/flutter_callkit_voximplant) package is
 used to integrate CallKit.
 
-// TODO: Add Android&iOS call screens
+<p>
+  <img alt="Sign in" src="assets/samsung_phone_call.gif" width="250"/>
+  <img alt="Phone call" src="assets/iphone_phone_call.gif" width="250"/>
+</p>
 
 ### Launch the app
 
@@ -68,15 +74,13 @@ When the user answered a call the video call should start. If the app is in the 
 should be returned to foreground so user can see the video call screen. If the app is already in foreground it can just
 show the video call screen.
 
-// TODO: App launch scheme
+![App scheme](assets/app_scheme.png)
 
 ## Video calls
 
 To launch a video call between two users the app uses [Agora](https://www.agora.io/en/) as a real-time video calls
 provider. Joining a video call is based on
 the [token authentication](https://docs.agora.io/en/video-calling/develop/integrate-token-generation?platform=android).
-
-// TODO: Video call screenshots?
 
 ## Push notifications service
 
