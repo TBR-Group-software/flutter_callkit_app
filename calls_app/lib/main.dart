@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'injection/injection.dart';
 import 'ui/app.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isAndroid) {
