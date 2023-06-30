@@ -9,6 +9,7 @@ Cloud Functions written in TypeScript.
 <p>
   <img alt="Sign in" src="assets/sign_in.gif" width="250"/>
   <img alt="Phone call" src="assets/phone_call.gif" width="250"/>
+  <img alt="Video call" src="assets/video_call.gif" width="250"/>
 </p>
 
 ## Features
