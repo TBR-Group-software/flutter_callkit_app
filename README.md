@@ -64,8 +64,8 @@ are written. On iOS the [flutter_callkit_voximplant](https://pub.dev/packages/fl
 used to integrate CallKit.
 
 <p>
-  <img alt="Sign in" src="assets/samsung_phone_call.gif" width="250"/>
-  <img alt="Phone call" src="assets/iphone_phone_call.gif" width="250"/>
+  <img alt="Samsung phone call" src="assets/samsung_phone_call.gif" width="250"/>
+  <img alt="IPhone phone call" src="assets/iphone_phone_call.gif" width="250"/>
 </p>
 
 ### Launch the app
@@ -105,3 +105,21 @@ It uses [Secret Manager](https://cloud.google.com/secret-manager/docs/overview) 
 - Agora app ID and app certificate.
 - OneSignal 1st app ID and REST API key (for general push notifications).
 - OneSignal 2nd app ID and REST API key (for VoIP notifications).
+
+# Getting started
+
+**Step 1:**
+
+Download or clone this repo by using the link below:
+
+```
+https://github.com/TBR-Group-software/flutter_callkit_app.git
+```
+
+**Step 2:**
+
+Follow the [Flutter app setup](calls_app/README.md) and [Firebase setup](calls_firebase_cloud_functions/README.md).
+
+# License
+
+This project is licensed under the GNU GPL v3 License - see the [LICENSE.md](LICENSE) file for details.
